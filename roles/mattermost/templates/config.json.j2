@@ -1,9 +1,9 @@
 {
     "ServiceSettings": {
-        "SiteURL": "",
-        "WebsocketURL": "",
+        "SiteURL": "{{ mattermost_site_url if defined }}",
+        "WebsocketURL": "{{ mattermost_websocket_url if defined }}",
         "LicenseFileLocation": "",
-        "ListenAddress": ":8065",
+        "ListenAddress": "{{ mattermost_listen_address }}",
         "ConnectionSecurity": "",
         "TLSCertFile": "",
         "TLSKeyFile": "",

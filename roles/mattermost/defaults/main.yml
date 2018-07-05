@@ -3,3 +3,4 @@ mattermost_user_name: mattermost
 mattermost_group_name: mattermost
 mattermost_user_home: /opt/mattermost
 mattermost_db_backend: mysql
+mattermost_listen_address: :8065
