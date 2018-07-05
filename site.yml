@@ -1,0 +1,5 @@
+- hosts: servers
+  roles:
+     - { role: adfinis-sygroup.nginx, tags: nginx }
+     - { role: adfinis-sygroup.mariadb, tags: mariadb }
+     - { role: mattermost, tags: mattermost }
