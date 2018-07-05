@@ -1,0 +1,20 @@
+# .gitignore
+
+# system
+*.swp
+*~
+
+# ansible
+*.retry
+/vault-pass
+/adfinis-roles/
+
+# python
+*.pyc
+.python-version
+
+# documentation
+/doc/_build/
+
+# vagrant
+/.vagrant/

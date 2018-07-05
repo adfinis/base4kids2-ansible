@@ -1,0 +1,9 @@
+---
+# -*- coding: utf-8 -*-
+
+- src: adfinis-sygroup.mariadb
+  version: master
+- src: adfinis-sygroup.nginx
+  version: master
+
+# vim: set ts=2 sw=2 :
