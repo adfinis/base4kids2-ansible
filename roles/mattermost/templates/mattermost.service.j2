@@ -1,0 +1,15 @@
+[Unit]
+Description=Mattermost
+After=syslog.target network.target mariadb.service
+
+[Service]
+Type=notify
+WorkingDirectory=/opt/mattermost
+User=mattermost
+ExecStart=/opt/mattermost/bin/mattermost
+PIDFile=/var/spool/mattermost/pid/master.pid
+TimeoutStartSec=3600
+LimitNOFILE=49152
+
+[Install]
+WantedBy=multi-user.target

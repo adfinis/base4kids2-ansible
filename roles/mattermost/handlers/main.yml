@@ -1,0 +1,5 @@
+---
+ - name: mattermost_restart
+   service: 
+     name: mattermost
+     state: restarted
