@@ -2,26 +2,26 @@
 
 # mariadb related packages
 mariadb_packages:
-  - mysql
-  - mysql-server
+  - rh-mariadb102
+  - rh-mariadb102-mariadb-server
   - MySQL-python
   - pwgen
   - pyOpenSSL
 
 # mariadb service name
-mariadb_service: mysqld
+mariadb_service: rh-mariadb102-mariadb
 
 # mariadb user
-mariadb_user: mysql
+mariadb_user: mariadb
 
 # mariadb server binary
-mariadb_server_bin: /usr/sbin/mysqld
+mariadb_server_bin: /opt/rh/rh-mariadb102/root/usr/libexec/mysqld
 
 # global mariadb configuration file location
 mariadb_conf: /etc/my.cnf
 
 # global mariadb configuration directory
-mariadb_conf_dir: /etc/mysql/conf.d
+mariadb_conf_dir: /etc/mariadb/conf.d
 
 # mariadb configuration files
 mariadb_conf_files:
@@ -34,16 +34,16 @@ mariadb_conf_files:
 mariadb_root_mycnf: /root/.my.cnf
 
 # mariadb slow log file
-mariadb_log_slow: /var/log/mysql-slow.log
+mariadb_log_slow: /var/log/mariadb/mariadb-slow.log
 
 # mariadb error log file
-mariadb_log_error: /var/log/mysqld.err
+mariadb_log_error: /var/log/mariadb/mariadbd.err
 
 # mariadb run directory
-mariadb_run_dir: /var/run/mysqld
+mariadb_run_dir: /var/run/rh-mariadb102-mariadb
 
 # mariadb socket file
-mariadb_socket: '{{ mariadb_run_dir }}/mysqld.sock'
+mariadb_socket: '/var/lib/mysql/mysql.sock'
 
 # mariadb anonymous users
 mariadb_anon_user_hosts:
@@ -51,7 +51,7 @@ mariadb_anon_user_hosts:
   - '{{ ansible_fqdn }}'
 
 # mariadb pki path
-mariadb_pki_path: /etc/pki/mysql
+mariadb_pki_path: /etc/pki/mariadb
 
 # MariaDB default character set.
 mariadb_character_set_default: utf8mb4
