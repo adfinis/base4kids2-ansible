@@ -1,0 +1,38 @@
+---
+ - name: configure mattermost vhost template
+   template:
+     src: mattermost.conf.j2
+     dest: /etc/nginx/conf.d/mattermost.conf
+     owner: root
+     group: root
+   notify: reload_httpd
+ 
+
+ - name: configure application template
+   template:
+     src: config.json.j2
+     dest: '{{ mattermost_user_home }}/config/config.json'
+   notify: mattermost_restart
+
+ - name: systemd application file
+   template:
+     src: mattermost.service.j2
+     dest: /etc/systemd/system/mattermost.service
+     mode: 0644
+     owner: root
+     group: root 
+   notify: mattermost_restart 
+
+ - name: start mattermost
+   service: 
+     name: mattermost
+     state: started
+     enabled: true
+
+ - name: enable firewall for mattermost
+   firewalld:
+     service: '{{ item }}'
+     state: enabled
+   with_items:
+     - http
+     - https

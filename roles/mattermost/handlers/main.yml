@@ -3,3 +3,9 @@
    service: 
      name: mattermost
      state: restarted
+
+ - name: reload_httpd
+   service:
+     name: '{{ httpd_service_name }}'
+     state: reloaded
+

@@ -1,59 +1,27 @@
---- 
- - name: create application group
-   group:
-     name: '{{ mattermost_group_name }}'
+---
 
- - name: Create Mattermost user
-   user:
-     name: '{{ mattermost_user_name }}'
-     comment: 'mattermost user'
-     createhome: true
-     group: '{{ mattermost_group_name }}' 
-     home: '{{ mattermost_user_home }}'
+- name: include os specific vars
+  include_vars: '{{ item }}'
+  with_first_found:
+    - '{{ ansible_distribution }}_{{ ansible_distribution_major_version }}.yml'
+    - '{{ ansible_os_family }}.yml'
+  tags:
+    - 'role::mattermost'
+    - 'role::mattermost:install'
+    - 'role::mattermost:config'
 
- - name: download and unpack application source
-   get_url: 
-     url: https://releases.mattermost.com/5.0.0/mattermost-5.0.0-linux-amd64.tar.gz
-     dest: /opt/mattermost-5.0.0-linux-amd64.tar.gz 
-     remote_src: yes 
+- import_tasks: installation.yml
+  tags:
+    - 'role::mattermost'
+    - 'role::mattermost:install'
 
- - name: unpack application
-   archive: 
-     path: '/opt/mattermost-5.0.0-linux.amd64.tar.gz'
-     dest: '{{ mattermost_user_home }}'
+- import_tasks: configuration.yml
+  tags:
+    - 'role::mattermost'
+    - 'role::mattermost:config'
 
- - name: give group rights to homedirectory
-   file:
-     path: '{{ mattermost_user_home }}'
-     owner: '{{ mattermost_user_name }}'
-     group: '{{ mattermost_group_name }}'
-     mode: 'g+w'
-     recurse: true
-
- - name: create datadirectory
-   file: 
-     path: '{{ mattermost_user_home }}/data'
-     owner: '{{ mattermost_user_name }}'
-     group: '{{ mattermost_group_name }}'
-     state: directory
-
- - name: configure application template
-   template:
-     src: config.json.j2
-     dest: '{{ mattermost_user_home }}/config/config.json'
-   notify: mattermost_restart
-
- - name: systemd application file
-   template:
-     src: mattermost.service.j2
-     dest: /etc/systemd/system/mattermost.service
-     mode: 0644
-     owner: root
-     group: root 
-   notify: mattermost_restart 
-
- - name: start mattermost
-   service: 
-     name: mattermost
-     state: started
-     enabled: true
+- import_tasks: sslconfig.yml
+  tags:
+    - 'role::mattermost'
+    - 'role::mattermost:config'
+ 

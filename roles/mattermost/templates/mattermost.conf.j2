@@ -1,0 +1,35 @@
+server {
+    listen 80;
+    return 301 https://$host$request_uri;
+}
+
+server {
+
+    listen 443;
+    server_name {{ mattermost_site_url }};
+
+    ssl_certificate           {{ httpd_ssl_cert_path }}/{{ httpd_ssl_cert_name }};
+    ssl_certificate_key       {{ httpd_ssl_cert_path }}/{{ httpd_ssl_key_name }};
+
+    ssl on;
+
+    access_log            /var/log/nginx/jenkins.access.log;
+
+    add_header Strict-Transport-Security max-age=15768000;
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    location / {
+
+      proxy_set_header        Host $host;
+      proxy_set_header        X-Real-IP $remote_addr;
+      proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header        X-Forwarded-Proto $scheme;
+
+      # Fix the “It appears that your reverse proxy set up is broken" error.
+      proxy_pass          http://localhost{{ mattermost_listen_address }};
+      proxy_read_timeout  90;
+
+      proxy_redirect      http://localhost{{ mattermost_listen_address }} https://{{ mattermost_site_url }};
+    }
+  }
