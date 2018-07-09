@@ -50,7 +50,6 @@
      mode: 0644
      owner: root
      group: root 
-   notify: systemd_reload
    notify: mattermost_restart 
 
  - name: start mattermost
