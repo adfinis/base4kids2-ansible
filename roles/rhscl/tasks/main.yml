@@ -1,0 +1,8 @@
+---
+ - name: subscribe to rhel-server-rhscl-7-eus-rpms
+   redhat_subscription:
+     pool: rhel-server-rhscl-7-eus-rpms
+     username: '{{ rhscl_user }}'
+     password: '{{ rhscl_password }}'
+
+
