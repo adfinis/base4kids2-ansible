@@ -1,2 +1,7 @@
 [servers]
+
+[mattermost]
 vm-adsy-b4k2-03.adfinis-sygroup.ch ansible_user=root
+
+[nextcloud]
+vm-adsy-b4k2-01.adfinis-sygroup.ch ansible_user=root

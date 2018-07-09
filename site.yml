@@ -1,5 +1,19 @@
-- hosts: servers
+- hosts: all
   roles:
+     - { role: rhscl, tags: rhscl }
+
+- hosts: mattermost
+  roles:
+     - { role: epel, tags: epel }
      - { role: adfinis-sygroup.nginx, tags: nginx }
      - { role: adfinis-sygroup.mariadb, tags: mariadb }
      - { role: mattermost, tags: mattermost }
+
+- hosts: nextcloud
+  roles:
+     - { role: epel, tags: epel }
+     - { role: adfinis-sygroup.mariadb, tags: mariadb }
+     - { role: apache, tags: apache }
+     - { role: php7, tags: php7 }
+     - { role: nextcloud, tags: nextcloud }
+ 
