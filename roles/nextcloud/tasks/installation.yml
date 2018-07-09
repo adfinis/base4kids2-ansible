@@ -1,0 +1,13 @@
+---
+ - name: download nextcloud
+   get_url:
+     url: '{{ nextcloud_url }}/nextcloud-{{ nextcloud_version }}.tar.bz2'
+     dest: '{{ nextcloud_local }}'
+     checksum: '{{ nextcloud_checksum }}'
+
+ - name: extract archive
+   unarchive: 
+     remote_src: yes
+     src: '{{ nextcloud_local }}/nextcloud-{{ nextcloud_version}}.tar.bz2' 
+     dest: '{{ nextcloud_install_dir }}'
+     creates: '{{ nextcloud_install_dir }}/nextcloud'

@@ -1,0 +1,5 @@
+httpd_user: apache
+httpd_group: apache
+httpd_site_conf_path: /etc/httpd/conf.d
+httpd_service_name: httpd
+httpd_ssl_cert_path: /etc/ssl/private/

@@ -1,0 +1,14 @@
+<?php
+
+$CONFIG = array(
+'trusted_domains' =>
+  array (
+    0 => '{{ nextcloud_site_fqdn }}',
+  ),
+  'datadirectory' => '{{ nextcloud_install_dir }}/nextcloud/data',
+  'dbtype' => '{{ nextcloud_db_type }}',
+  'dbhost' => '{{ nextcloud_db_host }}',
+  'dbname' => '{{ nextcloud_db_name }}',
+  'dbuser' => '{{ nextcloud_db_user }}',
+  'dbpassword' => '{{ nextcloud_db_password }}',
+);

@@ -1,0 +1,35 @@
+---
+ - name: generate data directory
+   file:
+     path: '{{ nextcloud_install_dir }}/nextcloud/data'
+     setype: httpd_sys_rw_content_t
+     owner: '{{ httpd_user }}'
+     group: '{{ httpd_group }}'
+     state: directory
+
+ - name: selinux contexts for nextcloud
+   file: 
+     path: '{{ nextcloud_install_dir }}/{{ item }}' 
+     setype: httpd_sys_rw_content_t
+     owner: '{{ httpd_user }}'
+     group: '{{ httpd_group }}'
+   with_list: '{{ nextcloud_selinux_paths }}'
+
+ - name: apache site configuraiton for nextcloud
+   template:
+     src: nextcloud.conf.j2
+     setype: httpd_sys_rw_content_t
+     dest: '{{ httpd_site_conf_path }}/nextcloud.conf'
+     owner: '{{ httpd_user }}'
+     group: '{{ httpd_group }}'
+   notify: reload_httpd
+
+ - name: db configuration for nextcloud
+   template:
+     src: config.php.j2
+     dest: '{{ nextcloud_install_dir }}/nextcloud/config/config.php'
+     setype: httpd_sys_rw_content_t
+     owner: '{{ httpd_user }}'
+     group: '{{ httpd_group }}'
+     force: no 
+    
