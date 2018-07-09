@@ -1,0 +1,5 @@
+---
+ - name: install apache
+   package:
+     name: '{{ item }}'
+   with_list: '{{ apache_packages }}'

@@ -1,0 +1,13 @@
+---
+ - name: start apache
+   service:
+     name: '{{ apache_servicename }}'
+     enabled: true
+
+ - name: configure firewall to allow http/https
+   firewalld:
+     state: enabled
+     service: '{{ item }}'
+   with_items:
+     - http
+     - https 

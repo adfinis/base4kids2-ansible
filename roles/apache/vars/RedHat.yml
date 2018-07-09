@@ -1,0 +1,6 @@
+apache_packages:
+  - httpd
+  - mod_ssl
+  - openssl
+
+apache_servicename: httpd 
