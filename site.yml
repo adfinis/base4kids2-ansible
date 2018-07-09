@@ -1,6 +1,6 @@
 - hosts: all
   roles:
-     - { role: rhscl, tags: rhscl }
+#     - { role: rhscl, tags: rhscl }
 
 - hosts: mattermost
   roles:
