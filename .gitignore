@@ -18,3 +18,7 @@
 
 # vagrant
 /.vagrant/
+
+# Gitignore for encypted files
+files/*
+host_vars/*

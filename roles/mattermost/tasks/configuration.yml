@@ -6,7 +6,13 @@
      owner: root
      group: root
    notify: reload_httpd
- 
+
+ - name: install mattermost licsense 
+   copy:
+     src: 'files/{{ mattermost_licsense_name }}'
+     dest: '{{ mattermost_user_home }}/config/{{ mattermost_licsense_name }}'
+   notify: mattermost_restart
+   when: mattermost_licsense_name is defined
 
  - name: configure application template
    template:

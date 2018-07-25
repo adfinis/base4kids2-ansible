@@ -14,14 +14,15 @@
      owner: '{{ httpd_user }}'
      group: '{{ httpd_group }}'
      setype: httpd_sys_rw_content_t 
+     mode: 0600
    notify: reload_httpd
 
- - name: copy ssl certs to path
+ - name: create certificate chainfile
    copy:
-     src: 'files/{{ httpd_ssl_key_name }}'
+     src: '{{ httpd_ssl_cert_key }}' 
      dest: '{{ httpd_ssl_cert_path }}/{{ httpd_ssl_key_name }}'
      owner: '{{ httpd_user }}'
      group: '{{ httpd_group }}'
+     mode: 0600
      setype: httpd_sys_rw_content_t 
    notify: reload_httpd
-
