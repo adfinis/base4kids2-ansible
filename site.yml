@@ -16,4 +16,8 @@
      - { role: apache, tags: apache }
      - { role: php7, tags: php7 }
      - { role: nextcloud, tags: nextcloud }
- 
+
+- hosts: ldap 
+  roles:
+     - { role: ldapuser, tags: ldapuser }
+  

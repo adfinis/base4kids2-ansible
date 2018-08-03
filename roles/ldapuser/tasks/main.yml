@@ -1,0 +1,63 @@
+---
+ - name: add ldap group entry
+   ldap_entry:
+     dn: "cn={{ item.key }},ou=Groups,{{ ldapuser_ldap_base }}"
+     bind_dn: "{{ ldapuser_ldap_binddn }}"
+     bind_pw: "{{ ldapuser_ldap_bindpw }}"
+     server_uri: "{{ ldapuser_ldap_uri }}"
+     objectClass:
+       - top
+       - groupofuniquenames
+       - posixgroup
+     attributes:
+       gidnumber: "{{ item.value.gid }}"
+   with_dict: "{{ ldapuser_groups }}"
+
+ - name: add ldap user entry
+   ldap_entry:
+     dn: "uid={{ item.name|lower }}.{{ item.sn|lower }}@b4k2.ch,ou=People,{{ ldapuser_ldap_base }}"
+     bind_dn: "{{ ldapuser_ldap_binddn }}"
+     bind_pw: "{{ ldapuser_ldap_bindpw }}"
+     server_uri: "{{ ldapuser_ldap_uri }}"
+     objectClass:
+       - top
+       - inetorgperson
+       - kolabinetorgperson
+       - mailrecipient
+       - organizationalperson
+       - person
+     attributes: 
+       givenName: "{{ item.name }}"
+       mailQuota: "1048576"
+       preferredLanguage: "de_CH"
+       sn: "{{ item.sn }}"
+       cn: "{{ item.name }} {{ item.sn }}"
+       displayName: "{{ item.sn }}, {{ item.name }}"
+       mail: "{{ item.mail }}" 
+       uid: "{{ item.name|lower }}.{{ item.sn|lower }}@b4k2.ch"
+       userPassword: "{{ ldapuser_user_password | password_hash() | b64encode }}"
+   with_items: "{{ ldapuser_users }}"
+
+ - name: add users to group 
+   ldap_attr:
+     dn: "cn={{ item.1.klasse }},ou=Groups,{{ ldapuser_ldap_base }}"
+     bind_dn: "{{ ldapuser_ldap_binddn }}"
+     bind_pw: "{{ ldapuser_ldap_bindpw }}"
+     server_uri: "{{ ldapuser_ldap_uri }}"
+     name: uniqueMember
+     values: "uid={{ item.0.name|lower }}.{{ item.0.sn|lower }}@b4k2.ch,ou=People,{{ ldapuser_ldap_base }}"
+   with_subelements: 
+     - "{{ ldapuser_users }}"
+     - klassen 
+
+ - name: ensure passwords
+   ldap_attr:
+     dn: "uid={{ item.name|lower }}.{{ item.sn|lower }}@b4k2.ch,ou=People,{{ ldapuser_ldap_base }}"
+     bind_dn: "{{ ldapuser_ldap_binddn }}"
+     bind_pw: "{{ ldapuser_ldap_bindpw }}"
+     server_uri: "{{ ldapuser_ldap_uri }}"
+     name: userPassword
+     #values: "{{ ldapuser_user_password | password_hash('sha512','mysalt25') }}"  
+     values: '{SSHA512}FDSO0QckCARGZRtJmSBj08op+oruTsoorB9oQe2mR6qbX5dMdF/de7ZXNLoM0gg19vMaF/FAtbKbmCHbB7rkXJCECmDaHEO2'   
+     state: exact
+   with_items: "{{ ldapuser_users }}"
