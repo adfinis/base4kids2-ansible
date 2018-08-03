@@ -11,4 +11,5 @@ $CONFIG = array(
   'dbname' => '{{ nextcloud_db_name }}',
   'dbuser' => '{{ nextcloud_db_user }}',
   'dbpassword' => '{{ nextcloud_db_password }}',
+  'auth.bruteforce.protection.enabled' => {{ nextcloud_ddos_prevention|default("true") }},
 );
