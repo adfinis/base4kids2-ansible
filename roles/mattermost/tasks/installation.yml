@@ -13,8 +13,8 @@
 
  - name: download and unpack application source
    get_url: 
-     url: https://releases.mattermost.com/5.0.0/mattermost-5.0.0-linux-amd64.tar.gz
-     dest: /opt/mattermost-5.0.0-linux-amd64.tar.gz 
+     url: "{{ mattermost_releases_url }}/{{ mattermost_version }}-linux-amd64.tar.gz"
+     dest: "/opt/mattermost-{{ mattermost_version }}-linux-amd64.tar.gz"
      remote_src: yes 
 
  - name: unpack application
