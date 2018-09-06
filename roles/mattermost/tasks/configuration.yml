@@ -40,5 +40,6 @@
      service: '{{ item }}'
      state: enabled
    with_items:
+     - "{{ mattermost_listen_address }}"
      - http
      - https
