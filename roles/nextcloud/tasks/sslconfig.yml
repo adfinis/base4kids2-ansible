@@ -18,8 +18,8 @@
 
  - name: copy ssl certs to path
    copy:
-     src: 'files/{{ httpd_ssl_key_name }}'
-     dest: '{{ httpd_ssl_cert_path }}/{{ httpd_ssl_key_name }}'
+     src: 'files/{{ httpd_ssl_cert_key }}'
+     dest: '{{ httpd_ssl_cert_path }}/{{ httpd_ssl_cert_key }}'
      owner: '{{ httpd_user }}'
      group: '{{ httpd_group }}'
      setype: httpd_sys_rw_content_t 
