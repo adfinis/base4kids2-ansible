@@ -79,3 +79,8 @@
  - name: allow access to ldap server selinux
    command: setsebool -P httpd_can_connect_ldap on
 
+ - name: allow network access to HTTPS in firewalld
+   firewalld:
+     service: https
+     permanent: true
+     state: enabled
