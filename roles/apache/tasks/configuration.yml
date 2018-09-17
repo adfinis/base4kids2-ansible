@@ -8,6 +8,7 @@
    firewalld:
      state: enabled
      service: '{{ item }}'
+     permanent: true
    with_items:
      - http
      - https 
