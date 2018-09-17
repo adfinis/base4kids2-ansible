@@ -19,7 +19,7 @@
 
  - name: unpack application
    archive: 
-     path: '/opt/mattermost-5.0.0-linux.amd64.tar.gz'
+     path: '/opt/mattermost-{{ mattermost_version }}-linux.amd64.tar.gz'
      dest: '{{ mattermost_user_home }}'
 
  - name: give group rights to homedirectory
