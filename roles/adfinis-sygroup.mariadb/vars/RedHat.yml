@@ -2,20 +2,19 @@
 
 # mariadb related packages
 mariadb_packages:
-  - rh-mariadb102
-  - rh-mariadb102-mariadb-server
+  - MariaDB-server
   - MySQL-python
   - pwgen
   - pyOpenSSL
 
 # mariadb service name
-mariadb_service: rh-mariadb102-mariadb
+mariadb_service: mariadb
 
 # mariadb user
 mariadb_user: mariadb
 
 # mariadb server binary
-mariadb_server_bin: /opt/rh/rh-mariadb102/root/usr/libexec/mysqld
+mariadb_server_bin: /usr/sbin/mysqld
 
 # global mariadb configuration file location
 mariadb_conf: /etc/my.cnf
@@ -34,13 +33,13 @@ mariadb_conf_files:
 mariadb_root_mycnf: /root/.my.cnf
 
 # mariadb slow log file
-mariadb_log_slow: /var/log/mariadb/mariadb-slow.log
+mariadb_log_slow: /var/lib/mysql/mariadb-slow.log
 
 # mariadb error log file
-mariadb_log_error: /var/log/mariadb/mariadbd.err
+mariadb_log_error: /var/lib/mysql/mariadbd.err
 
 # mariadb run directory
-mariadb_run_dir: /var/run/rh-mariadb102-mariadb
+mariadb_run_dir: /run/mariadb
 
 # mariadb socket file
 mariadb_socket: '/var/lib/mysql/mysql.sock'
