@@ -1,6 +1,7 @@
 [servers]
 
 [mattermost]
+sax81106 
 vm-adsy-b4k2-03.adfinis-sygroup.ch ansible_user=root
 
 [nextcloud]
