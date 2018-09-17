@@ -39,7 +39,13 @@
    firewalld:
      service: '{{ item }}'
      state: enabled
+     permanent: true
    with_items:
-     - "{{ mattermost_listen_address }}"
      - http
      - https
+
+ - name: enable firewall for mattermost
+   firewalld:
+     port: '{{ mattermost_listen_port }}/tcp'
+     state: enabled
+     permanent: true

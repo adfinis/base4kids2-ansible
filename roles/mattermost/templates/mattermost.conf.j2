@@ -9,7 +9,7 @@ server {
     server_name {{ mattermost_site_url }};
 
     ssl_certificate           {{ httpd_ssl_cert_path }}/{{ httpd_ssl_cert_name }};
-    ssl_certificate_key       {{ httpd_ssl_cert_path }}/{{ httpd_ssl_key_name }};
+    ssl_certificate_key       {{ httpd_ssl_cert_path }}/{{ httpd_ssl_cert_key }};
 
     ssl on;
 

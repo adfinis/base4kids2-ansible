@@ -4,6 +4,7 @@ mattermost_group_name: mattermost
 mattermost_user_home: /opt/mattermost
 mattermost_db_backend: mysql
 mattermost_listen_address: :8065
+mattermost_listen_port: 8065
 mattermost_ldap_port: 389
 mattermost_version: 5.3.0
 mattermost_releases_url: https://releases.mattermost.com/

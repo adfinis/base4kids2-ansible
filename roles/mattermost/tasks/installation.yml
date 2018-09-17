@@ -11,16 +11,17 @@
      group: '{{ mattermost_group_name }}' 
      home: '{{ mattermost_user_home }}'
 
- - name: download and unpack application source
+ - name: download application source
    get_url: 
-     url: "{{ mattermost_releases_url }}/{{ mattermost_version }}-linux-amd64.tar.gz"
+     url: "{{ mattermost_releases_url }}{{ mattermost_version}}/mattermost-{{ mattermost_version }}-linux-amd64.tar.gz"
      dest: "/opt/mattermost-{{ mattermost_version }}-linux-amd64.tar.gz"
-     remote_src: yes 
 
  - name: unpack application
-   archive: 
-     path: '/opt/mattermost-{{ mattermost_version }}-linux.amd64.tar.gz'
-     dest: '{{ mattermost_user_home }}'
+   unarchive: 
+     src: '/opt/mattermost-{{ mattermost_version }}-linux-amd64.tar.gz'
+     dest: '/opt/'
+     remote_src: yes 
+     creates: '/opt/mattermost/bin/mattermost'
 
  - name: give group rights to homedirectory
    file:
