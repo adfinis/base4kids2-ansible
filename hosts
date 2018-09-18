@@ -6,6 +6,7 @@ vm-adsy-b4k2-03.adfinis-sygroup.ch ansible_user=root
 
 [nextcloud]
 vm-adsy-b4k2-01.adfinis-sygroup.ch ansible_user=root
+sax81108
 
 [ldap]
 vm-adsy-b4k2-04.adfinis-sygroup.ch ansible_user=root
