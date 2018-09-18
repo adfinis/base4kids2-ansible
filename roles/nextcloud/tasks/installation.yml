@@ -1,4 +1,8 @@
 ---
+ - name: ensure unzip
+   package:
+     name: '{{ nextcloud_unarchiver }}'
+
  - name: download nextcloud
    get_url:
      url: '{{ nextcloud_url }}/nextcloud-{{ nextcloud_version }}.tar.bz2'
@@ -10,4 +14,6 @@
      remote_src: yes
      src: '{{ nextcloud_local }}/nextcloud-{{ nextcloud_version}}.tar.bz2' 
      dest: '{{ nextcloud_install_dir }}'
+     group: '{{ httpd_group }}'
+     owner: '{{ httpd_user }}'
      creates: '{{ nextcloud_install_dir }}/nextcloud'

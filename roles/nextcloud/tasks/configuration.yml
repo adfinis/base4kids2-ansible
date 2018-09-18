@@ -41,6 +41,11 @@
      group: '{{ httpd_group }}'
      setype: httpd_sys_rw_content_t
 
+ - name: provision nextcloud database
+   become: true
+   become_user: '{{ httpd_user }}'
+   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ maintenance:install --database=mysql --database-name={{ nextcloud_db_name }} --database-host={{ nextcloud_db_host }} --database-pass={{ nextcloud_db_password }} --database-user={{ nextcloud_db_user }} --admin-user=admin --admin-pass={{ nextcloud_db_password }}"
+
  - name: enable ldap backend
    become: true
    become_user: '{{ httpd_user }}'
