@@ -1,0 +1,32 @@
+--- 
+ - name: create ssl private directory
+   file:
+     path: '{{ lool_ssl_cert_path }}'
+     owner: '{{ lool_user }}'
+     group: '{{ lool_group }}'
+     state: directory
+
+ - name: copy ssl cert to path
+   copy:
+     src: 'files/{{ lool_ssl_cert_name }}'
+     dest: '{{ lool_ssl_cert_path }}/{{ lool_ssl_cert_name }}'
+     owner: '{{ lool_user }}'
+     group: '{{ lool_group }}'
+   notify: restart_loolwsd
+
+ - name: copy ssl cert key to path
+   copy:
+     src: 'files/{{ lool_ssl_cert_key }}'
+     dest: '{{ lool_ssl_cert_path }}/{{ lool_ssl_cert_key }}'
+     owner: '{{ lool_user }}'
+     group: '{{ lool_group }}'
+   notify: restart_loolwsd
+
+ - name: copy ssl ca chain to path
+   copy:
+     src: 'files/{{ lool_ssl_ca_chain }}'
+     dest: '{{ lool_ssl_cert_path }}/{{ lool_ssl_ca_chain }}'
+     owner: '{{ lool_user }}'
+     group: '{{ lool_group }}'
+   notify: restart_loolwsd
+

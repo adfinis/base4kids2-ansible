@@ -1,0 +1,18 @@
+---
+
+ - name: add collaboraoffice repo
+   yum_repository:
+     name: collaboraoffice
+     description: Collabora Online
+     gpgkey: 'https://collaboraoffice.com/repos/CollaboraOnline/3/customer-centos7-{{ lool_customer_hash }}/repodata/repomd.xml.key'
+     baseurl: 'https://collaboraoffice.com/repos/CollaboraOnline/3/customer-centos7-{{ lool_customer_hash }}'
+
+ - name: install collabora online packages
+   package:
+     name: '{{ item }}'
+     state: latest
+   with_items:
+     - loolwsd
+     - collabora-online-brand
+     - collaboraoffice*de*
+

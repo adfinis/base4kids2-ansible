@@ -1,0 +1,37 @@
+---
+
+ - name: crate logfile
+   file:
+     path: /var/log/loolwsd.log
+     owner: lool
+     group: lool
+     mode: 0660
+
+ - name: lool configuration
+   template:
+     src: loolwsd.xml.j2
+     dest: '{{ lool_conf_path }}/loolwsd.xml'
+     owner: '{{ lool_user }}'
+     group: '{{ lool_group }}'
+   notify: restart_loolwsd
+
+ - name: configure firewall to allow loolwsd port
+   firewalld:
+     state: enabled
+     port: '{{ lool_port }}/tcp'
+     permanent: true
+
+ - name: enabling loolwsd service
+   service:
+     name: loolwsd
+     enabled: yes
+     state: started
+
+ - name: configure selinux to permissive
+   selinux:
+     policy: targeted
+     state: permissive
+
+ - name: ensure SELinux is turned off until the next reboot
+   action: command /usr/sbin/setenforce 0
+   ignore_errors: yes

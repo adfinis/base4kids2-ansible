@@ -10,3 +10,6 @@ sax81108
 
 [ldap]
 vm-adsy-b4k2-04.adfinis-sygroup.ch ansible_user=root
+
+[lool]
+sax81107

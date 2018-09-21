@@ -1,0 +1,7 @@
+lool_user: lool
+lool_group: lool
+lool_port: 9980
+lool_service_name: loolwsd
+lool_conf_path: /etc/loolwsd
+lool_ssl_cert_path: /etc/loolwsd/ssl
+
