@@ -20,4 +20,8 @@
 - hosts: ldap 
   roles:
      - { role: ldapuser, tags: ldapuser }
-  
+
+- hosts: lool
+  roles:
+     - { role: lool, tags: lool }
+
