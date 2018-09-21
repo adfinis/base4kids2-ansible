@@ -32,6 +32,15 @@
      group: '{{ httpd_group }}'
      setype: httpd_sys_rw_content_t
 
+ - name: creating data directory
+   file:
+     path: '{{ nextcloud_data_directory }}'
+     state: directory
+     mode: 0770
+     owner: '{{ httpd_user }}'
+     group: '{{ httpd_group }}'
+   when: nextcloud_data_directory is defined
+
  - name: provision nextcloud database
    become: true
    become_user: '{{ httpd_user }}'
@@ -42,6 +51,12 @@
    become: true
    become_user: '{{ httpd_user }}'
    command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:system:set trusted_domains 0 --value={{ nextcloud_site_fqdn }}"
+
+ - name: configure data directory
+   become: true
+   become_user: '{{ httpd_user }}'
+   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:system:set datadirectory --value={{ nextcloud_data_directory }}"
+   when: nextcloud_data_directory is defined
 
  - name: enable ldap backend
    become: true
@@ -61,6 +76,22 @@
    failed_when: false
    changed_when: false
 
+ - name: install richdocuments (collabora online integration)
+   become: true
+   become_user: '{{ httpd_user }}'
+   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ app:install richdocuments"
+   ignore_errors: yes
+
+ - name: enable richdocuments
+   become: true
+   become_user: '{{ httpd_user }}'
+   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ app:enable richdocuments"
+
+ - name: configure richdocuments
+   become: true
+   become_user: '{{ httpd_user }}'
+   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:app:set richdocuments wopi_url --value={{ nextcloud_wopi_url }}"
+ 
  - name: debug 
    debug:
      var: nextcloud_ldap_config
@@ -70,7 +101,6 @@
    become_user: '{{ httpd_user }}'
    command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ ldap:create-empty-config"  
    when: not "s01" in nextcloud_ldap_config_query.stdout_lines
-    
 
  - name: apply config setting for ldap configuration
    become: true
@@ -81,3 +111,34 @@
  - name: allow access to ldap server selinux
    command: setsebool -P httpd_can_connect_ldap on
 
+   # - name: copy custom logo into place
+   #   copy:
+   #     src: 'files/{{ nextcloud_logo }}'
+   #     dest: '{{ nextcloud_install_dir }}/ somewhere /img/logo.svg'
+   #     owner: '{{ httpd_user }}'
+   #     group: '{{ httpd_group }}'
+
+ - name: setting theme color
+   become: true
+   become_user: '{{ httpd_user }}'
+   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:app:set theming color --value='{{ nextcloud_theming_color }}'"  
+ 
+ - name: setting theme name
+   become: true
+   become_user: '{{ httpd_user }}'
+   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:app:set theming name --value='{{ nextcloud_theming_name }}'"  
+ 
+ - name: setting theme slogan
+   become: true
+   become_user: '{{ httpd_user }}'
+   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:app:set theming slogan --value='{{ nextcloud_theming_slogan }}'"
+ 
+ - name: setting theme url
+   become: true
+   become_user: '{{ httpd_user }}'
+   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:app:set theming name --value='{{ nextcloud_theming_url }}'"
+
+ - name: update cache for the logo change to work
+   become: true
+   become_user: '{{ httpd_user }}'
+   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ maintenance:theme:update"
