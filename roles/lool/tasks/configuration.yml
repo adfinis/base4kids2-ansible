@@ -1,5 +1,28 @@
 ---
 
+ - name: enabling masquerading in firewalld
+   firewalld:
+     masquerade: yes
+     state: enabled
+     permanent: true
+     zone: public
+
+ - name: redirect port 443 to loolwsd port
+   firewalld:
+     rich_rule: rule family={{ item }} forward-port port=443 protocol=tcp to-port={{ lool_port }}
+     zone:      public
+     permanent: true
+     immediate: true
+     state:     enabled
+   with_items:
+     - ipv4
+
+ - name: enabling firewalld service
+   service:
+     name: firewalld
+     enabled: yes
+     state: started
+
  - name: crate logfile
    file:
      path: /var/log/loolwsd.log
@@ -14,12 +37,6 @@
      owner: '{{ lool_user }}'
      group: '{{ lool_group }}'
    notify: restart_loolwsd
-
- - name: configure firewall to allow loolwsd port
-   firewalld:
-     state: enabled
-     port: '{{ lool_port }}/tcp'
-     permanent: true
 
  - name: enabling loolwsd service
    service:
