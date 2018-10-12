@@ -1,8 +1,8 @@
 [servers]
 
 [mattermost]
-sax81106 
 vm-adsy-b4k2-03.adfinis-sygroup.ch ansible_user=root
+sax81106 
 
 [nextcloud]
 vm-adsy-b4k2-01.adfinis-sygroup.ch ansible_user=root
@@ -10,6 +10,7 @@ sax81108
 
 [ldap]
 vm-adsy-b4k2-04.adfinis-sygroup.ch ansible_user=root
+sax81112
 
 [lool]
 sax81107
