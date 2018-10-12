@@ -10,7 +10,10 @@ sax81108
 
 [ldap]
 vm-adsy-b4k2-04.adfinis-sygroup.ch ansible_user=root
-sax81112
+# standalone
+#sax81112
+# kolab
+sax81111
 
 [lool]
 sax81107
