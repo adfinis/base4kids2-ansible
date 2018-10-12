@@ -4,4 +4,4 @@ lool_port: 9980
 lool_service_name: loolwsd
 lool_conf_path: /etc/loolwsd
 lool_ssl_cert_path: /etc/loolwsd/ssl
-
+lool_admin_user: admin
