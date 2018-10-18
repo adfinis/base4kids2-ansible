@@ -48,7 +48,9 @@
    selinux:
      policy: targeted
      state: permissive
+   changed_when: False
 
  - name: ensure SELinux is turned off until the next reboot
    action: command /usr/sbin/setenforce 0
    ignore_errors: yes
+   changed_when: False
