@@ -1,7 +1,7 @@
 ---
  - name: add ldap group entry
    ldap_entry:
-     dn: "cn={{ item.key }},ou=Groups,{{ ldapuser_ldap_base }}"
+     dn: "cn={{ item.key }},ou=static,ou=Groups,{{ ldapuser_ldap_base }}"
      bind_dn: "{{ ldapuser_ldap_binddn }}"
      bind_pw: "{{ ldapuser_ldap_bindpw }}"
      server_uri: "{{ ldapuser_ldap_uri }}"
@@ -15,7 +15,7 @@
 
  - name: add ldap user entry
    ldap_entry:
-     dn: "uid={{ item.name|lower }}.{{ item.sn|lower }}@b4k2.ch,ou=People,{{ ldapuser_ldap_base }}"
+     dn: "uid={{ item.uid }},ou=static,ou=People,{{ ldapuser_ldap_base }}"
      bind_dn: "{{ ldapuser_ldap_binddn }}"
      bind_pw: "{{ ldapuser_ldap_bindpw }}"
      server_uri: "{{ ldapuser_ldap_uri }}"
@@ -34,13 +34,20 @@
        cn: "{{ item.name }} {{ item.sn }}"
        displayName: "{{ item.sn }}, {{ item.name }}"
        mail: "{{ item.mail }}" 
-       uid: "{{ item.name|lower }}.{{ item.sn|lower }}@b4k2.ch"
-       userPassword: "{{ ldapuser_user_password | password_hash() | b64encode }}"
+   with_items: "{{ ldapuser_users }}"
+
+ - name: add ldap password for user entry
+   ldap_password:
+     dn: "uid={{ item.uid }},ou=static,ou=People,{{ ldapuser_ldap_base }}"
+     bind_dn: "{{ ldapuser_ldap_binddn }}"
+     bind_pw: "{{ ldapuser_ldap_bindpw }}"
+     server_uri: "{{ ldapuser_ldap_uri }}"
+     passwd: "{{ item.password }}"
    with_items: "{{ ldapuser_users }}"
 
  - name: add users to group 
    ldap_attr:
-     dn: "cn={{ item.1.klasse }},ou=Groups,{{ ldapuser_ldap_base }}"
+     dn: "cn={{ item.1.klasse }},ou=static,ou=Groups,{{ ldapuser_ldap_base }}"
      bind_dn: "{{ ldapuser_ldap_binddn }}"
      bind_pw: "{{ ldapuser_ldap_bindpw }}"
      server_uri: "{{ ldapuser_ldap_uri }}"
@@ -49,15 +56,3 @@
    with_subelements: 
      - "{{ ldapuser_users }}"
      - klassen 
-
- - name: ensure passwords
-   ldap_attr:
-     dn: "uid={{ item.name|lower }}.{{ item.sn|lower }}@b4k2.ch,ou=People,{{ ldapuser_ldap_base }}"
-     bind_dn: "{{ ldapuser_ldap_binddn }}"
-     bind_pw: "{{ ldapuser_ldap_bindpw }}"
-     server_uri: "{{ ldapuser_ldap_uri }}"
-     name: userPassword
-     #values: "{{ ldapuser_user_password | password_hash('sha512','mysalt25') }}"  
-     values: '{SSHA512}FDSO0QckCARGZRtJmSBj08op+oruTsoorB9oQe2mR6qbX5dMdF/de7ZXNLoM0gg19vMaF/FAtbKbmCHbB7rkXJCECmDaHEO2'   
-     state: exact
-   with_items: "{{ ldapuser_users }}"
