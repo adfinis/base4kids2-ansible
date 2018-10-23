@@ -1,7 +1,24 @@
 ---
+ - name: ensure sub-ou exists
+   ldap_entry:
+     dn: "ou=static,ou=People,{{ ldapuser_ldap_base }}"
+     bind_dn: "{{ ldapuser_ldap_binddn }}"
+     bind_pw: "{{ ldapuser_ldap_bindpw }}"
+     server_uri: "{{ ldapuser_ldap_uri }}"
+     objectClass: organizationalUnit
+
+ - name: ensure sub-ou exists
+   ldap_entry:
+     dn: "ou=static,ou=Groups,{{ ldapuser_ldap_base }}"
+     bind_dn: "{{ ldapuser_ldap_binddn }}"
+     bind_pw: "{{ ldapuser_ldap_bindpw }}"
+     server_uri: "{{ ldapuser_ldap_uri }}"
+     objectClass: organizationalUnit
+
+ 
  - name: add ldap group entry
    ldap_entry:
-     dn: "cn={{ item.key }},ou=Groups,{{ ldapuser_ldap_base }}"
+     dn: "cn={{ item.key }},ou=static,ou=Groups,{{ ldapuser_ldap_base }}"
      bind_dn: "{{ ldapuser_ldap_binddn }}"
      bind_pw: "{{ ldapuser_ldap_bindpw }}"
      server_uri: "{{ ldapuser_ldap_uri }}"
@@ -15,7 +32,7 @@
 
  - name: add ldap user entry
    ldap_entry:
-     dn: "uid={{ item.name|lower }}.{{ item.sn|lower }}@b4k2.ch,ou=People,{{ ldapuser_ldap_base }}"
+     dn: "uid={{ item.uid }},ou=static,ou=People,{{ ldapuser_ldap_base }}"
      bind_dn: "{{ ldapuser_ldap_binddn }}"
      bind_pw: "{{ ldapuser_ldap_bindpw }}"
      server_uri: "{{ ldapuser_ldap_uri }}"
@@ -34,30 +51,29 @@
        cn: "{{ item.name }} {{ item.sn }}"
        displayName: "{{ item.sn }}, {{ item.name }}"
        mail: "{{ item.mail }}" 
-       uid: "{{ item.name|lower }}.{{ item.sn|lower }}@b4k2.ch"
-       userPassword: "{{ ldapuser_user_password | password_hash() | b64encode }}"
+       userPassword: "{{ item.password | password_hash('ldap_sha512', 'test_user_salt') }}"
    with_items: "{{ ldapuser_users }}"
+
+# 389 Has an ACL that prevents Directory Manager to set a password directly. He can only reset a password, but not set it. 
+#
+# - name: add ldap password for user entry
+#   ldap_passwd:
+#     dn: "uid={{ item.uid }},ou=static,ou=People,{{ ldapuser_ldap_base }}"
+#     bind_dn: "{{ ldapuser_ldap_binddn }}"
+#     bind_pw: "{{ ldapuser_ldap_bindpw }}"
+#     server_uri: "{{ ldapuser_ldap_uri }}"
+##     passwd: "{{ item.password }}"
+#   with_items: "{{ ldapuser_users }}"
+# 
 
  - name: add users to group 
    ldap_attr:
-     dn: "cn={{ item.1.klasse }},ou=Groups,{{ ldapuser_ldap_base }}"
+     dn: "cn={{ item.1.klasse }},ou=static,ou=Groups,{{ ldapuser_ldap_base }}"
      bind_dn: "{{ ldapuser_ldap_binddn }}"
      bind_pw: "{{ ldapuser_ldap_bindpw }}"
      server_uri: "{{ ldapuser_ldap_uri }}"
      name: uniqueMember
-     values: "uid={{ item.0.name|lower }}.{{ item.0.sn|lower }}@b4k2.ch,ou=People,{{ ldapuser_ldap_base }}"
+     values: "uid={{ item.0.uid }},ou=People,{{ ldapuser_ldap_base }}"
    with_subelements: 
      - "{{ ldapuser_users }}"
      - klassen 
-
- - name: ensure passwords
-   ldap_attr:
-     dn: "uid={{ item.name|lower }}.{{ item.sn|lower }}@b4k2.ch,ou=People,{{ ldapuser_ldap_base }}"
-     bind_dn: "{{ ldapuser_ldap_binddn }}"
-     bind_pw: "{{ ldapuser_ldap_bindpw }}"
-     server_uri: "{{ ldapuser_ldap_uri }}"
-     name: userPassword
-     #values: "{{ ldapuser_user_password | password_hash('sha512','mysalt25') }}"  
-     values: '{SSHA512}FDSO0QckCARGZRtJmSBj08op+oruTsoorB9oQe2mR6qbX5dMdF/de7ZXNLoM0gg19vMaF/FAtbKbmCHbB7rkXJCECmDaHEO2'   
-     state: exact
-   with_items: "{{ ldapuser_users }}"
