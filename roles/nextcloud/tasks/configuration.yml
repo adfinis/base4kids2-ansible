@@ -1,4 +1,11 @@
 ---
+
+ - name: fake register
+   become: true
+   become_user: '{{ httpd_user }}'
+   command: id
+   register: fake_register
+
  - name: generate data directory
    file:
      path: '{{ nextcloud_install_dir }}/nextcloud/data'
@@ -41,11 +48,18 @@
      group: '{{ httpd_group }}'
    when: nextcloud_data_directory is defined
 
+ - name: check for existing nextcloud config
+   become: true
+   become_user: '{{ httpd_user }}'
+   stat:
+     path: '{{ nextcloud_install_dir }}/nextcloud/config/config.php'
+   register: nextcloud_config_file
+
  - name: provision nextcloud database
    become: true
    become_user: '{{ httpd_user }}'
    command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ maintenance:install --database=mysql --database-name={{ nextcloud_db_name }} --database-host={{ nextcloud_db_host }} --database-pass={{ nextcloud_db_password }} --database-user={{ nextcloud_db_user }} --admin-user=admin --admin-pass={{ nextcloud_db_password }}"
-   when: not '{{ nextcloud_install_dir }}/nextcloud/config/config.php'
+   when: nextcloud_config_file.stat.exists == false
 
  - name: set trusted nextcloud domains
    become: true
@@ -57,24 +71,6 @@
    become_user: '{{ httpd_user }}'
    command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:system:set datadirectory --value={{ nextcloud_data_directory }}"
    when: nextcloud_data_directory is defined
-
- - name: enable ldap backend
-   become: true
-   become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ app:enable user_ldap"
-
- - name: enable ldap backend
-   become: true
-   become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ app:enable user_ldap"
-
- - name: read ldap config
-   become: true
-   become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ ldap:show-config" 
-   register: nextcloud_ldap_config_query
-   failed_when: false
-   changed_when: false
 
  - name: install richdocuments (collabora online integration)
    become: true
@@ -91,16 +87,37 @@
    become: true
    become_user: '{{ httpd_user }}'
    command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:app:set richdocuments wopi_url --value={{ nextcloud_wopi_url }}"
+
+ - name: allow access to ldap server selinux
+   command: setsebool -P httpd_can_connect_ldap on
+
+ - name: enable ldap backend
+   become: true
+   become_user: '{{ httpd_user }}'
+   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ app:enable user_ldap"
+
+ - name: read ldap config
+   become: true
+   become_user: '{{ httpd_user }}'
+   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ ldap:show-config"
+   register: nextcloud_ldap_config_query
+   failed_when: false
+   changed_when: false
  
  - name: debug 
    debug:
      var: nextcloud_ldap_config
    
+ - name: debug 
+   debug:
+     var: nextcloud_ldap_config_query
+
  - name: create ldap config s01
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ ldap:create-empty-config"  
-   when: not "s01" in nextcloud_ldap_config_query.stdout_lines
+   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ ldap:create-empty-config"
+   when: nextcloud_ldap_config_query.stdout_lines | join('') is search('s01')
+   #   when: '"s01" not in nextcloud_ldap_config_query.stdout'
 
  - name: apply config setting for ldap configuration
    become: true
@@ -108,9 +125,7 @@
    command: "/opt/rh/rh-php70/root/bin/php {{ nextcloud_install_dir }}/nextcloud/occ ldap:set-config s01 {{ item.key }} {{ item.value.entry }}"  
    with_dict: "{{ nextcloud_ldap_config }}"
 
- - name: allow access to ldap server selinux
-   command: setsebool -P httpd_can_connect_ldap on
-
+# Theming
    # - name: copy custom logo into place
    #   copy:
    #     src: 'files/{{ nextcloud_logo }}'
