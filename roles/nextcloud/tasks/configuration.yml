@@ -72,6 +72,12 @@
    command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:system:set datadirectory --value={{ nextcloud_data_directory }}"
    when: nextcloud_data_directory is defined
 
+ - name: configure default language
+   become: true
+   become_user: '{{ httpd_user }}'
+   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:system:set default_language --value={{ nextcloud_default_language }}"
+   when: nextcloud_data_directory is defined
+
  - name: install richdocuments (collabora online integration)
    become: true
    become_user: '{{ httpd_user }}'
@@ -116,14 +122,24 @@
    become: true
    become_user: '{{ httpd_user }}'
    command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ ldap:create-empty-config"
-   when: nextcloud_ldap_config_query.stdout_lines | join('') is search('s01')
-   #   when: '"s01" not in nextcloud_ldap_config_query.stdout'
+   # when: '"s01" not in nextcloud_ldap_config_query.stdout'
+   # when: nextcloud_ldap_config_query.stdout_lines | join('') is search('s01')
+   # those when's are not really working. always creating a empty LDAP cfg. not directly
+   # a problem, but not nice.
 
  - name: apply config setting for ldap configuration
    become: true
    become_user: '{{ httpd_user }}'
    command: "/opt/rh/rh-php70/root/bin/php {{ nextcloud_install_dir }}/nextcloud/occ ldap:set-config s01 {{ item.key }} {{ item.value.entry }}"  
    with_dict: "{{ nextcloud_ldap_config }}"
+
+ - name: deploying wormhole.html file
+   copy:
+     src: wormhole.html
+     dest: "{{ nextcloud_install_dir }}/wormhole.html"
+     owner: '{{ httpd_user }}'
+     group: '{{ httpd_group }}'
+     mode: 0644
 
 # Theming
    # - name: copy custom logo into place
