@@ -15,4 +15,10 @@
      - loolwsd
      - collabora-online-brand
      - collaboraoffice*de*
+     - collaboraoffice*fr*
+     - collaboraoffice*it*
+     - hunspell-de
+     - hunspell-fr
+     - hunspell-it
+     - hunspell-en*
 
