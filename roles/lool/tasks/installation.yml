@@ -26,3 +26,9 @@
      - hunspell-it
      - hunspell-en*
 
+ - name: linking /usr/share/myspell to /usr/share/hunspell for dicts to work
+   file:
+     src: /usr/share/myspell
+     dest: /usr/share/hunspell
+     state: link
+
