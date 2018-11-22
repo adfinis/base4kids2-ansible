@@ -17,6 +17,10 @@
      - collaboraoffice*de*
      - collaboraoffice*fr*
      - collaboraoffice*it*
+     - collaboraoffice5.3-dict-de
+     - collaboraoffice5.3-dict-fr
+     - collaboraoffice5.3-dict-it
+     - collaboraoffice5.3-dict-en
      - hunspell-de
      - hunspell-fr
      - hunspell-it
