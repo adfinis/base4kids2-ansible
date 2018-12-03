@@ -1,0 +1,4 @@
+ldapuser_ldap_stdous:
+  - People
+  - Groups
+

@@ -20,6 +20,19 @@
      dest: '{{ mattermost_user_home }}/config/config.json'
    notify: mattermost_restart
 
+ - name: install certificates for sso broker
+   copy:
+     src: '{{ item }}'
+     dest: '{{ mattermost_user_home }}/config/{{ item }}'
+     owner: '{{ mattermost_user_name }}'
+     group: '{{ mattermost_group_name }}'
+     mode: 0640
+   with_items: 
+     - '{{ mattermost_broker_cert_key }}'
+     - '{{ mattermost_ssl_public_cert }}'
+     - '{{ mattermost_ssl_private_key }}'
+   notify: mattermost_restart
+
  - name: systemd application file
    template:
      src: mattermost.service.j2

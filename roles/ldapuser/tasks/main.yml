@@ -14,7 +14,6 @@
      bind_pw: "{{ ldapuser_ldap_bindpw }}"
      server_uri: "{{ ldapuser_ldap_uri }}"
      objectClass: organizationalUnit
-
  
  - name: add ldap group entry
    ldap_entry:
@@ -29,6 +28,7 @@
      attributes:
        gidnumber: "{{ item.value.gid }}"
    with_dict: "{{ ldapuser_groups }}"
+   when: ldapuser_groups is defined
 
  - name: add ldap user entry
    ldap_entry:
@@ -53,6 +53,7 @@
        mail: "{{ item.mail }}" 
        userPassword: "{{ item.password | password_hash('ldap_sha512', 'test_user_salt') }}"
    with_items: "{{ ldapuser_users }}"
+   when: ldapuser_users is defined
 
 # 389 Has an ACL that prevents Directory Manager to set a password directly. He can only reset a password, but not set it. 
 #
@@ -77,3 +78,4 @@
    with_subelements: 
      - "{{ ldapuser_users }}"
      - klassen 
+   when: ldapuser_users is defined
