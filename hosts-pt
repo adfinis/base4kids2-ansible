@@ -7,9 +7,7 @@ sax81106
 sax81108
 
 [ldap]
-# standalone
-#sax81112
-# kolab
+sax81112
 sax81111
 
 [lool]
