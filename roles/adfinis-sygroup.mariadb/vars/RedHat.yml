@@ -9,7 +9,7 @@ mariadb_packages:
   - pyOpenSSL
 
 # mariadb service name
-mariadb_service: rh-mariadb102-mariadb 
+mariadb_service: mariadb 
 
 # mariadb user
 mariadb_user: mariadb
