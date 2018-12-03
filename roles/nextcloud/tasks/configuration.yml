@@ -21,6 +21,7 @@
      owner: '{{ httpd_user }}'
      group: '{{ httpd_group }}'
    with_list: '{{ nextcloud_selinux_paths }}'
+   ignore_errors: yes
 
  - name: apache site configuraiton for nextcloud
    template:
@@ -54,7 +55,7 @@
 
  - name: waiting for the nextcloud installation to finish
    pause:
-     seconds: 30
+     seconds: 10
 
  - name: enable maintenance mode
    become: true
@@ -81,9 +82,24 @@
      group: '{{ httpd_group }}'
    when: nextcloud_data_directory is defined
 
+ - name: creating skeleton directory
+   file:
+     path: '{{ nextcloud_data_directory }}/skeleton'
+     setype: httpd_sys_rw_content_t
+     state: directory
+     mode: 0770
+     owner: '{{ httpd_user }}'
+     group: '{{ httpd_group }}'
+   when: nextcloud_data_directory is defined
+
+ - name: set skeletondirectory
+   become: true
+   become_user: '{{ httpd_user }}'
+   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:system:set skeletondirectory --value={{ nextcloud_data_directory }}/skeleton"
+
  - name: waiting for the nextcloud installation to finish
    pause:
-     seconds: 30
+     seconds: 10
    when: nextcloud_data_directory is defined
 
  - name: set trusted nextcloud domains
@@ -106,6 +122,23 @@
    become: true
    become_user: '{{ httpd_user }}'
    command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ app:enable richdocuments"
+
+ - name: install SSO & SAML authentication
+   become: true
+   become_user: '{{ httpd_user }}'
+   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ app:install user_saml"
+   ignore_errors: yes
+
+ - name: enable SSO & SAML authenthication
+   become: true
+   become_user: '{{ httpd_user }}'
+   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ app:enable user_saml"
+
+ - name: apply config setting for SSO & SAML configuration
+   become: true
+   become_user: '{{ httpd_user }}'
+   command: "/opt/rh/rh-php70/root/bin/php {{ nextcloud_install_dir }}/nextcloud/occ config:app:set user_saml {{ item.key }} --value=\"{{ item.value.entry }}\""
+   with_dict: "{{ nextcloud_saml_config }}"
 
  - name: configure richdocuments
    become: true
