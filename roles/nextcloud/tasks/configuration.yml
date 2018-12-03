@@ -39,15 +39,6 @@
      group: '{{ httpd_group }}'
      setype: httpd_sys_rw_content_t
 
- - name: creating data directory
-   file:
-     path: '{{ nextcloud_data_directory }}'
-     state: directory
-     mode: 0770
-     owner: '{{ httpd_user }}'
-     group: '{{ httpd_group }}'
-   when: nextcloud_data_directory is defined
-
  - name: check for existing nextcloud config
    become: true
    become_user: '{{ httpd_user }}'
@@ -61,10 +52,14 @@
    command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ maintenance:install --database=mysql --database-name={{ nextcloud_db_name }} --database-host={{ nextcloud_db_host }} --database-pass={{ nextcloud_db_password }} --database-user={{ nextcloud_db_user }} --admin-user=admin --admin-pass={{ nextcloud_db_password }}"
    when: nextcloud_config_file.stat.exists == false
 
- - name: set trusted nextcloud domains
+ - name: waiting for the nextcloud installation to finish
+   pause:
+     seconds: 30
+
+ - name: enable maintenance mode
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:system:set trusted_domains 0 --value={{ nextcloud_site_fqdn }}"
+   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ maintenance:mode --on"
 
  - name: configure data directory
    become: true
@@ -72,11 +67,34 @@
    command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:system:set datadirectory --value={{ nextcloud_data_directory }}"
    when: nextcloud_data_directory is defined
 
+ - name: move data directory to correct location
+   command: mv "{{ nextcloud_install_dir }}/nextcloud/data" "{{ nextcloud_data_directory }}"
+   when: nextcloud_data_directory is defined
+ 
+ - name: creating data directory
+   file:
+     path: '{{ nextcloud_data_directory }}'
+     setype: httpd_sys_rw_content_t
+     state: directory
+     mode: 0770
+     owner: '{{ httpd_user }}'
+     group: '{{ httpd_group }}'
+   when: nextcloud_data_directory is defined
+
+ - name: waiting for the nextcloud installation to finish
+   pause:
+     seconds: 30
+   when: nextcloud_data_directory is defined
+
+ - name: set trusted nextcloud domains
+   become: true
+   become_user: '{{ httpd_user }}'
+   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:system:set trusted_domains 0 --value={{ nextcloud_site_fqdn }}"
+
  - name: configure default language
    become: true
    become_user: '{{ httpd_user }}'
    command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:system:set default_language --value={{ nextcloud_default_language }}"
-   when: nextcloud_data_directory is defined
 
  - name: install richdocuments (collabora online integration)
    become: true
@@ -101,6 +119,11 @@
    become: true
    become_user: '{{ httpd_user }}'
    command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ app:enable user_ldap"
+
+ - name: disabling maintenance mode
+   become: true
+   become_user: '{{ httpd_user }}'
+   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ maintenance:mode --off"
 
  - name: read ldap config
    become: true
@@ -136,7 +159,7 @@
  - name: deploying wormhole.html file
    copy:
      src: wormhole.html
-     dest: "{{ nextcloud_install_dir }}/wormhole.html"
+     dest: "{{ nextcloud_install_dir }}/nextcloud/wormhole.html"
      owner: '{{ httpd_user }}'
      group: '{{ httpd_group }}'
      mode: 0644
@@ -173,3 +196,4 @@
    become: true
    become_user: '{{ httpd_user }}'
    command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ maintenance:theme:update"
+

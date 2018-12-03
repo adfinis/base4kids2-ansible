@@ -15,4 +15,20 @@
      - loolwsd
      - collabora-online-brand
      - collaboraoffice*de*
+     - collaboraoffice*fr*
+     - collaboraoffice*it*
+     - collaboraoffice5.3-dict-de
+     - collaboraoffice5.3-dict-fr
+     - collaboraoffice5.3-dict-it
+     - collaboraoffice5.3-dict-en
+     - hunspell-de
+     - hunspell-fr
+     - hunspell-it
+     - hunspell-en*
+
+ - name: linking /usr/share/myspell to /usr/share/hunspell for dicts to work
+   file:
+     src: /usr/share/myspell
+     dest: /usr/share/hunspell
+     state: link
 
