@@ -31,7 +31,7 @@
         "EnableMultifactorAuthentication": false,
         "EnforceMultifactorAuthentication": false,
         "EnableUserAccessTokens": false,
-        "AllowCorsFrom": "",
+        "AllowCorsFrom": "{{ mattermost_cors_url }}",
         "CorsExposedHeaders": "",
         "CorsAllowCredentials": false,
         "CorsDebug": false,
@@ -72,6 +72,7 @@
         "EnableAPITeamDeletion": false,
         "ExperimentalEnableHardenedMode": false,
         "ExperimentalLimitClientConfig": false,
+        "EnableEmailInvitations": true
     },
     "TeamSettings": {
         "SiteName": "{{ mattermost_site_name | default('Mattermost') }}",
