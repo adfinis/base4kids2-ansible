@@ -55,7 +55,7 @@
 
  - name: waiting for the nextcloud installation to finish
    pause:
-     seconds: 10
+     seconds: 30
 
  - name: enable maintenance mode
    become: true
@@ -99,7 +99,7 @@
 
  - name: waiting for the nextcloud installation to finish
    pause:
-     seconds: 10
+     seconds: 30
    when: nextcloud_data_directory is defined
 
  - name: set trusted nextcloud domains
@@ -117,6 +117,11 @@
    become_user: '{{ httpd_user }}'
    command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ app:install richdocuments"
    ignore_errors: yes
+
+ - name: disable federation
+   become: true
+   become_user: '{{ httpd_user }}'
+   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ app:disable federation"
 
  - name: enable richdocuments
    become: true
