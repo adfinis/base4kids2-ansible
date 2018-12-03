@@ -14,7 +14,6 @@
      bind_pw: "{{ ldapuser_ldap_bindpw }}"
      server_uri: "{{ ldapuser_ldap_uri }}"
      objectClass: organizationalUnit
-
  
  - name: add ldap group entry
    ldap_entry:
