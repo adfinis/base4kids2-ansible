@@ -48,6 +48,20 @@
      state: started
      enabled: true
 
+ - name: copy permission framework 
+   copy: 
+     src: mattermost-permissions-config.json
+     dest: "{{ mattermost_user_home }}/config/mattermost-permissions-config.json"
+     owner: "{{ mattermost_user_name }}"
+     group: "{{ mattermost_group_name }}"
+     mode: 0640
+
+ - name: import permissions to mattermost
+   command: "{{ mattermost_user_home }}/bin/mattermost import {{ mattermost_user_home }}/config/mattermost-permissions-config.json"
+   args:
+     chdir: "{{ mattermost_user_home }}/bin/"
+   become: '{{ mattermost_user_name }}'
+
  - name: enable firewall for mattermost
    firewalld:
      service: '{{ item }}'
