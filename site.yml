@@ -1,7 +1,3 @@
-- hosts: all
-  roles:
-#     - { role: rhscl, tags: rhscl }
-
 - hosts: mattermost
   roles:
      - { role: epel, tags: epel }
