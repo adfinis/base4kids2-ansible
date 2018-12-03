@@ -26,7 +26,7 @@
      dest: '{{ mattermost_user_home }}/config/{{ item }}'
      owner: '{{ mattermost_user_name }}'
      group: '{{ mattermost_group_name }}'
-     mode: 0640
+     mode: 0660
    with_items: 
      - '{{ mattermost_broker_cert_key }}'
      - '{{ mattermost_ssl_public_cert }}'
@@ -54,7 +54,7 @@
      dest: "{{ mattermost_user_home }}/config/mattermost-permissions-config.json"
      owner: "{{ mattermost_user_name }}"
      group: "{{ mattermost_group_name }}"
-     mode: 0640
+     mode: 0660
 
  - name: import permissions to mattermost
    command: "{{ mattermost_user_home }}/bin/mattermost import {{ mattermost_user_home }}/config/mattermost-permissions-config.json"
