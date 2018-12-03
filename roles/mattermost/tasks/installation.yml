@@ -37,3 +37,10 @@
      owner: '{{ mattermost_user_name }}'
      group: '{{ mattermost_group_name }}'
      state: directory
+
+ - name: create configdirectory
+   file:
+     path: '{{ mattermost_user_home }}/config/'
+     owner: '{{ mattermost_user_name }}'
+     group: '{{ mattermost_group_name }}'
+     state: directory
