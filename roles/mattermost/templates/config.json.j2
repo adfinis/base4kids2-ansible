@@ -272,7 +272,7 @@
         "UserFilter": "{{ mattermost_ldap_userfilter }}",
         "FirstNameAttribute": "{{ mattermost_ldap_attr_firstname | default('givenName') }}",
         "LastNameAttribute": "{{ mattermost_ldap_attr_lastname | default('sn') }}",
-        "EmailAttribute": "{{ mattermost_ldap_attr_email | default('mail')}}",
+        "EmailAttribute": "{{ mattermost_ldap_attr_email | default('mail') }}",
         "UsernameAttribute": "{{ mattermost_ldap_attr_user | default('mail') }}",
         "NicknameAttribute": "",
         "IdAttribute": "{{ mattermost_ldap_attr_idattribute | default('uid') }}",
@@ -309,8 +309,8 @@
         "ScopingIDPProviderId": "",
         "ScopingIDPName": "",
         "IdpCertificateFile": "{{ mattermost_broker_crt_key }}",
-        "PublicCertificateFile": "{{ mattermost_",
-        "PrivateKeyFile": "",
+        "PublicCertificateFile": "{{ mattermost_ssl_public_cert }}",
+        "PrivateKeyFile": "{{ mattermost_ssl_private_key }}",
         "IdAttribute": "urn:oid:0.9.2342.19200300.100.1.1",
         "FirstNameAttribute": "urn:oid:2.5.4.42",
         "LastNameAttribute": "urn:oid:2.5.4.4",
@@ -418,5 +418,5 @@
     },
     "TimezoneSettings": {
         "SupportedTimezonesPath": "timezones.json"
-    }
+    },
 }
