@@ -4,8 +4,8 @@
    yum_repository:
      name: collaboraoffice
      description: Collabora Online
-     gpgkey: 'https://collaboraoffice.com/repos/CollaboraOnline/3/customer-centos7-{{ lool_customer_hash }}/repodata/repomd.xml.key'
-     baseurl: 'https://collaboraoffice.com/repos/CollaboraOnline/3/customer-centos7-{{ lool_customer_hash }}'
+     gpgkey: 'https://collaboraoffice.com/repos/CollaboraOnline/CODE4/customer-centos7-{{ lool_customer_hash }}/repodata/repomd.xml.key'
+     baseurl: 'https://collaboraoffice.com/repos/CollaboraOnline/CODE4/customer-centos7-{{ lool_customer_hash }}'
 
  - name: install collabora online packages
    package:
@@ -13,22 +13,23 @@
      state: latest
    with_items:
      - loolwsd
-     - collabora-online-brand
+     - CODE-brand
      - collaboraoffice*de*
      - collaboraoffice*fr*
      - collaboraoffice*it*
-     - collaboraoffice5.3-dict-de
-     - collaboraoffice5.3-dict-fr
-     - collaboraoffice5.3-dict-it
-     - collaboraoffice5.3-dict-en
+     - collaboraoffice6.0-dict-de
+     - collaboraoffice6.0-dict-fr
+     - collaboraoffice6.0-dict-it
+     - collaboraoffice6.0-dict-en
      - hunspell-de
      - hunspell-fr
      - hunspell-it
      - hunspell-en*
+     - firewalld
+     - python-firewall
 
  - name: linking /usr/share/myspell to /usr/share/hunspell for dicts to work
    file:
      src: /usr/share/myspell
      dest: /usr/share/hunspell
      state: link
-
