@@ -8,16 +8,16 @@
 - hosts: nextcloud
   roles:
      - { role: epel, tags: epel }
+     - { role: rhscl, tags: rhscl }
      - { role: adfinis-sygroup.mariadb, tags: mariadb }
      - { role: apache, tags: apache }
      - { role: php7, tags: php7 }
      - { role: nextcloud, tags: nextcloud }
 
-- hosts: ldap 
+- hosts: ldap
   roles:
      - { role: ldapuser, tags: ldapuser }
 
 - hosts: lool
   roles:
      - { role: lool, tags: lool }
-
