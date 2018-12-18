@@ -2,5 +2,7 @@ apache_packages:
   - httpd
   - mod_ssl
   - openssl
+  - firewalld
+  - python-firewall
 
-apache_servicename: httpd 
+apache_servicename: httpd
