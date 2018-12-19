@@ -2,9 +2,9 @@ nextcloud_db_type: mysql
 nextcloud_db_host: 127.0.0.1
 nextcloud_db_name: nextcloud
 nextcloud_url: https://download.nextcloud.com/server/releases/
-nextcloud_version: 13.0.8
+nextcloud_version: 15.0.0
 nextcloud_local: /opt
-nextcloud_checksum: md5:567f2c7c41af6c78b7c0995cd68b28bd
+nextcloud_checksum: md5:9c45dccd3e4e8d708d56ec888b4fa81f
 nextcloud_install_dir: /var/www/html
 nextcloud_selinux_paths:
   - nextcloud/data
@@ -12,3 +12,4 @@ nextcloud_selinux_paths:
   - nextcloud/apps
   - nextcloud/.htaccess
   - nextcloud/.user.ini
+nextcloud_php: /opt/rh/rh-php72/root/usr/bin/php

@@ -2,13 +2,13 @@
  - name: install php7 packages
    package:
      name: '{{ item }}'
-   with_list: '{{ php7_packages }}' 
+   with_list: '{{ php7_packages }}'
 
  - name: install php7 mysql packages
    package:
      name: '{{ item }}'
    with_list: '{{ php7_mysql }}'
-  
+
  - name: install php7 ldap packages
    package:
      name: '{{ item }}'

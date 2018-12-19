@@ -1,18 +1,26 @@
 ---
  - name: install new php7 modules include path apache
    file:
-     src: /opt/rh/httpd24/root/etc/httpd/conf.d/rh-php70-php.conf
-     dest: /etc/httpd/conf.d/rh-php70-php.conf
+     src: /opt/rh/httpd24/root/etc/httpd/conf.d/rh-php72-php.conf
+     dest: /etc/httpd/conf.d/rh-php72-php.conf
      state: link
 
  - name: install new php7 modules include path apache
    file:
-     src: /opt/rh/httpd24/root/etc/httpd/conf.modules.d/15-rh-php70-php.conf
-     dest: /etc/httpd/conf.modules.d/15-rh-php70-php.conf
+     src: /opt/rh/httpd24/root/etc/httpd/conf.modules.d/15-rh-php72-php.conf
+     dest: /etc/httpd/conf.modules.d/15-rh-php72-php.conf
      state: link
 
  - name: install new php7 modules include path apache
    file:
-     src: /opt/rh/httpd24/root/etc/httpd/modules/librh-php70-php7.so
-     dest: /etc/httpd/modules/librh-php70-php7.so
+     src: /opt/rh/httpd24/root/etc/httpd/modules/librh-php72-php7.so
+     dest: /etc/httpd/modules/librh-php72-php7.so
      state: link
+
+ - name: ensure memory_limit of 512M
+   ini_file:
+     path: "{{ php_rh_ini_file }}"
+     section: PHP
+     option: memory_limit
+     value: 512M
+     backup: yes

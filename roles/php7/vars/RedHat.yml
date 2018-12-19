@@ -1,13 +1,16 @@
 php7_packages:
-  - rh-php70 
-  - rh-php70-php 
-  - rh-php70-php-gd 
-  - rh-php70-php-mbstring
+  - rh-php72
+  - rh-php72-php
+  - rh-php72-php-gd
+  - rh-php72-php-mbstring
+  - rh-php72-php-devel
 
 php7_mysql:
-  - rh-php70-php-mysqlnd
+  - rh-php72-php-mysqlnd
 
 php7_ldap:
-  - rh-php70-php-ldap
+  - rh-php72-php-ldap
 
 apache_servicename: httpd
+
+php_rh_ini_file: /etc/opt/rh/rh-php72/php.ini #/opt/rh/rh-php72/register.content/etc/opt/rh/rh-php72/php.ini

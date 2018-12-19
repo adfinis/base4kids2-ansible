@@ -15,8 +15,8 @@
      state: directory
 
  - name: selinux contexts for nextcloud
-   file: 
-     path: '{{ nextcloud_install_dir }}/{{ item }}' 
+   file:
+     path: '{{ nextcloud_install_dir }}/{{ item }}'
      setype: httpd_sys_rw_content_t
      owner: '{{ httpd_user }}'
      group: '{{ httpd_group }}'
@@ -50,7 +50,7 @@
  - name: provision nextcloud database
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ maintenance:install --database=mysql --database-name={{ nextcloud_db_name }} --database-host={{ nextcloud_db_host }} --database-pass={{ nextcloud_db_password }} --database-user={{ nextcloud_db_user }} --admin-user=admin --admin-pass={{ nextcloud_db_password }}"
+   command: "{{ nextcloud_php }} '{{ nextcloud_install_dir }}'/nextcloud/occ maintenance:install --database=mysql --database-name={{ nextcloud_db_name }} --database-host={{ nextcloud_db_host }} --database-pass={{ nextcloud_db_password }} --database-user={{ nextcloud_db_user }} --admin-user=admin --admin-pass={{ nextcloud_db_password }}"
    when: nextcloud_config_file.stat.exists == false
 
  - name: waiting for the nextcloud installation to finish
@@ -60,18 +60,18 @@
  - name: enable maintenance mode
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ maintenance:mode --on"
+   command: "{{ nextcloud_php }} '{{ nextcloud_install_dir }}'/nextcloud/occ maintenance:mode --on"
 
  - name: configure data directory
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:system:set datadirectory --value={{ nextcloud_data_directory }}"
+   command: "{{ nextcloud_php }} '{{ nextcloud_install_dir }}'/nextcloud/occ config:system:set datadirectory --value={{ nextcloud_data_directory }}"
    when: nextcloud_data_directory is defined
 
  - name: move data directory to correct location
    command: mv "{{ nextcloud_install_dir }}/nextcloud/data" "{{ nextcloud_data_directory }}"
    when: nextcloud_data_directory is defined
- 
+
  - name: creating data directory
    file:
      path: '{{ nextcloud_data_directory }}'
@@ -95,7 +95,7 @@
  - name: set skeletondirectory
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:system:set skeletondirectory --value={{ nextcloud_data_directory }}/skeleton"
+   command: "{{ nextcloud_php }} '{{ nextcloud_install_dir }}'/nextcloud/occ config:system:set skeletondirectory --value={{ nextcloud_data_directory }}/skeleton"
 
  - name: waiting for the nextcloud installation to finish
    pause:
@@ -105,84 +105,110 @@
  - name: set trusted nextcloud domains
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:system:set trusted_domains 0 --value={{ nextcloud_site_fqdn }}"
+   command: "{{ nextcloud_php }} '{{ nextcloud_install_dir }}'/nextcloud/occ config:system:set trusted_domains 0 --value={{ nextcloud_site_fqdn }}"
 
  - name: configure default language
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:system:set default_language --value={{ nextcloud_default_language }}"
+   command: "{{ nextcloud_php }} '{{ nextcloud_install_dir }}'/nextcloud/occ config:system:set default_language --value={{ nextcloud_default_language }}"
 
  - name: install richdocuments (collabora online integration)
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ app:install richdocuments"
+   command: "{{ nextcloud_php }} '{{ nextcloud_install_dir }}'/nextcloud/occ app:install richdocuments"
    ignore_errors: yes
 
  - name: disable federation
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ app:disable federation"
+   command: "{{ nextcloud_php }} '{{ nextcloud_install_dir }}'/nextcloud/occ app:disable federation"
 
  - name: enable richdocuments
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ app:enable richdocuments"
+   command: "{{ nextcloud_php }} '{{ nextcloud_install_dir }}'/nextcloud/occ app:enable richdocuments"
 
  - name: install SSO & SAML authentication
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ app:install user_saml"
+   command: "{{ nextcloud_php }} '{{ nextcloud_install_dir }}'/nextcloud/occ app:install user_saml"
    ignore_errors: yes
 
  - name: enable SSO & SAML authenthication
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ app:enable user_saml"
+   command: "{{ nextcloud_php }} '{{ nextcloud_install_dir }}'/nextcloud/occ app:enable user_saml"
 
  - name: apply config setting for SSO & SAML configuration
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php {{ nextcloud_install_dir }}/nextcloud/occ config:app:set user_saml {{ item.key }} --value=\"{{ item.value.entry }}\""
+   command: "{{ nextcloud_php }} {{ nextcloud_install_dir }}/nextcloud/occ config:app:set user_saml {{ item.key }} --value=\"{{ item.value.entry }}\""
    with_dict: "{{ nextcloud_saml_config }}"
 
  - name: configure richdocuments
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:app:set richdocuments wopi_url --value={{ nextcloud_wopi_url }}"
+   command: "{{ nextcloud_php }} '{{ nextcloud_install_dir }}'/nextcloud/occ config:app:set richdocuments wopi_url --value={{ nextcloud_wopi_url }}"
+
+ - name: enable selinux
+   selinux:
+     policy: targeted
+     state: enforcing
+
+ - name: reboot the machine to enable selinux
+   reboot:
+
+ - name: wait for server to come back
+   become: false
+   local_action:
+     module: wait_for
+       host={{ ansible_host }}
+       port=22
+       delay=2
+       state=started
 
  - name: allow access to ldap server selinux
-   command: setsebool -P httpd_can_connect_ldap on
+   seboolean:
+     name: httpd_can_connect_ldap
+     state: yes
+     persistent: yes
 
  - name: enable ldap backend
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ app:enable user_ldap"
+   command: "{{ nextcloud_php }} '{{ nextcloud_install_dir }}'/nextcloud/occ app:enable user_ldap"
 
  - name: disabling maintenance mode
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ maintenance:mode --off"
+   command: "{{ nextcloud_php }} '{{ nextcloud_install_dir }}'/nextcloud/occ maintenance:mode --off"
+
+ - name: update existing apps
+   become: true
+   become_user: '{{ httpd_user }}'
+   command: "{{ nextcloud_php }} '{{ nextcloud_install_dir }}'/nextcloud/occ upgrade"
+   ignore_errors: yes
 
  - name: read ldap config
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ ldap:show-config"
+   command: "{{ nextcloud_php }} '{{ nextcloud_install_dir }}'/nextcloud/occ ldap:show-config"
    register: nextcloud_ldap_config_query
    failed_when: false
    changed_when: false
- 
- - name: debug 
+
+ - name: debug
    debug:
      var: nextcloud_ldap_config
-   
- - name: debug 
+
+ - name: debug
    debug:
      var: nextcloud_ldap_config_query
 
  - name: create ldap config s01
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ ldap:create-empty-config"
+   command: "{{ nextcloud_php }} '{{ nextcloud_install_dir }}'/nextcloud/occ ldap:create-empty-config"
    # when: '"s01" not in nextcloud_ldap_config_query.stdout'
    # when: nextcloud_ldap_config_query.stdout_lines | join('') is search('s01')
    # those when's are not really working. always creating a empty LDAP cfg. not directly
@@ -191,7 +217,7 @@
  - name: apply config setting for ldap configuration
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php {{ nextcloud_install_dir }}/nextcloud/occ ldap:set-config s01 {{ item.key }} {{ item.value.entry }}"  
+   command: "{{ nextcloud_php }} {{ nextcloud_install_dir }}/nextcloud/occ ldap:set-config s01 {{ item.key }} {{ item.value.entry }}"
    with_dict: "{{ nextcloud_ldap_config }}"
 
  - name: deploying wormhole.html file
@@ -213,25 +239,24 @@
  - name: setting theme color
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:app:set theming color --value='{{ nextcloud_theming_color }}'"  
- 
+   command: "{{ nextcloud_php }} '{{ nextcloud_install_dir }}'/nextcloud/occ config:app:set theming color --value='{{ nextcloud_theming_color }}'"
+
  - name: setting theme name
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:app:set theming name --value='{{ nextcloud_theming_name }}'"  
- 
+   command: "{{ nextcloud_php }} '{{ nextcloud_install_dir }}'/nextcloud/occ config:app:set theming name --value='{{ nextcloud_theming_name }}'"
+
  - name: setting theme slogan
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:app:set theming slogan --value='{{ nextcloud_theming_slogan }}'"
- 
+   command: "{{ nextcloud_php }} '{{ nextcloud_install_dir }}'/nextcloud/occ config:app:set theming slogan --value='{{ nextcloud_theming_slogan }}'"
+
  - name: setting theme url
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ config:app:set theming name --value='{{ nextcloud_theming_url }}'"
+   command: "{{ nextcloud_php }} '{{ nextcloud_install_dir }}'/nextcloud/occ config:app:set theming name --value='{{ nextcloud_theming_url }}'"
 
  - name: update cache for the logo change to work
    become: true
    become_user: '{{ httpd_user }}'
-   command: "/opt/rh/rh-php70/root/bin/php '{{ nextcloud_install_dir }}'/nextcloud/occ maintenance:theme:update"
-
+   command: "{{ nextcloud_php }} '{{ nextcloud_install_dir }}'/nextcloud/occ maintenance:theme:update"
