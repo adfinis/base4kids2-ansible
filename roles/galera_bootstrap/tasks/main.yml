@@ -1,0 +1,28 @@
+---
+- name: stop mariadb on first galera node
+  service:
+    name: mariadb
+    state: stopped
+  when: inventory_hostname == groups['galera'][0]
+  tags:
+    - 'role::galera_bootstrap'
+
+- name: set first node safe to bootstrap
+  lineinfile:
+    dest: /var/lib/mysql/grastate.dat
+    regexp: "^safe_to_bootstrap.*"
+    line: "safe_to_bootstrap: 1"
+
+- name: bootstrap first galera node
+  command: galera_new_cluster
+  when: inventory_hostname == groups['galera'][0]
+  tags:
+    - 'role::galera_bootstrap'
+
+- name: restart the other galera nodes
+  service:
+    name: mariadb
+    state: restarted
+  when: inventory_hostname != groups['galera'][0]
+  tags:
+    - 'role::galera_bootstrap'

@@ -1,3 +1,4 @@
+---
 - hosts: mattermost
   roles:
      - { role: epel, tags: epel }
@@ -21,3 +22,7 @@
   roles:
      - { role: lool, tags: lool }
 
+- hosts: galera
+  roles:
+     - { role: galera, tags: galera }
+     - { role: galera_bootstrap, tags: galera_bootstrap }

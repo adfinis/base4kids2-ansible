@@ -1,0 +1,6 @@
+---
+galera_packages:
+  - mariadb-server
+
+galera_servicename: mariadb
+galera_mariadb_host_arch: "centos7-amd64"

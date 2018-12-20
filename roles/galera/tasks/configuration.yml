@@ -1,0 +1,15 @@
+---
+- name: add b4k mariadb config
+  template:
+    src: etc/my.cnf.d/base4kids.cnf.j2
+    dest: /etc/my.cnf.d/base4kids.cnf
+    owner: root
+    group: root
+    mode: 0644
+
+- include_tasks: configuration-selinux.yml
+
+- name: enable mariadb on boot
+  service:
+    name: "{{ galera_servicename }}"
+    enabled: yes

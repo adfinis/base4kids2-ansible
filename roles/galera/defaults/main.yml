@@ -1,0 +1,8 @@
+---
+galera_mariadb_release: 10.3
+galera_cluster_name: b4k_galera_cluster
+galera_selinux_packages:
+  - libselinux-python
+  - policycoreutils-python
+galera_interface: eth0
+galera_interface_fact_var: ansible_{{ galera_interface }}

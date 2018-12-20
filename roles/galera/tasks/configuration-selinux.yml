@@ -1,0 +1,35 @@
+---
+- name: enable selinux
+  selinux:
+    policy: targeted
+    state: enforcing
+
+- name: reboot the machine to enable selinux
+  reboot:
+
+- name: wait for server to come back
+  become: false
+  local_action:
+    module: wait_for
+      host={{ ansible_host }}
+      port=22
+      delay=2
+      state=started
+
+- name: allow mariadb to listen on tcp ports
+  seport:
+    ports: 4567-4568,4444
+    proto: tcp
+    setype: mysqld_port_t
+    state: present
+
+- name: allow mariadb to listen on udp port
+  seport:
+    ports: 4567
+    proto: udp
+    setype: mysqld_port_t
+    state: present
+
+- selinux_permissive:
+    name: mysqld_t
+    permissive: true
