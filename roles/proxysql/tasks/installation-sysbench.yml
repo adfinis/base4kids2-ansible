@@ -1,0 +1,12 @@
+---
+- name: download sysbench installer
+  get_url:
+    url: https://packagecloud.io/install/repositories/akopytov/sysbench/script.rpm.sh
+    dest: /tmp/script.rpm.sh
+    mode: 0755
+
+- name: enable the sysbench repo
+  shell: /tmp/script.rpm.sh
+
+- name: install sysbench
+  yum: name="sysbench" state="present"

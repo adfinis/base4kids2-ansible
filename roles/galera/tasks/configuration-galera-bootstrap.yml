@@ -4,25 +4,31 @@
     name: mariadb
     state: stopped
   when: inventory_hostname == groups['galera'][0]
-  tags:
-    - 'role::galera_bootstrap'
 
-- name: set first node safe to bootstrap
+- name: register grastate path
+  stat:
+    path: "{{ galera_grastate_path }}"
+  register: galera_register_grastate
+
+- name: set first node safe to bootstrap if if wsrep was run previously
   lineinfile:
     dest: /var/lib/mysql/grastate.dat
     regexp: "^safe_to_bootstrap.*"
     line: "safe_to_bootstrap: 1"
+  when: inventory_hostname == groups['galera'][0] and galera_register_grastate.stat.exists == True
+
+- name: enable wsrep on all nodes
+  lineinfile:
+    dest: /etc/my.cnf.d/base4kids.cnf
+    regexp: "^wsrep_on.*"
+    line: "wsrep_on=ON"
 
 - name: bootstrap first galera node
   command: galera_new_cluster
   when: inventory_hostname == groups['galera'][0]
-  tags:
-    - 'role::galera_bootstrap'
 
 - name: restart the other galera nodes
   service:
     name: mariadb
     state: restarted
   when: inventory_hostname != groups['galera'][0]
-  tags:
-    - 'role::galera_bootstrap'

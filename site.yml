@@ -14,7 +14,7 @@
      - { role: php7, tags: php7 }
      - { role: nextcloud, tags: nextcloud }
 
-- hosts: ldap 
+- hosts: ldap
   roles:
      - { role: ldapuser, tags: ldapuser }
 
@@ -25,4 +25,7 @@
 - hosts: galera
   roles:
      - { role: galera, tags: galera }
-     - { role: galera_bootstrap, tags: galera_bootstrap }
+
+- hosts: proxysql
+  roles:
+     - { role: proxysql, tags: proxysql }

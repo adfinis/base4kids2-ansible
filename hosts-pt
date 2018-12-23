@@ -16,5 +16,6 @@ galera-01 ansible_host=192.168.56.3
 galera-02 ansible_host=192.168.56.4
 galera-03 ansible_host=192.168.56.5
 
-[galera_bootstrap]
-galera-01 ansible_host=192.168.56.3
+[proxysql]
+proxysql-01 ansible_host=192.168.56.10
+proxysql-02 ansible_host=192.168.56.11

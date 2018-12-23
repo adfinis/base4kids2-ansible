@@ -9,7 +9,27 @@
 
 - include_tasks: configuration-selinux.yml
 
-- name: enable mariadb on boot
+- name: start and enable mariadb on boot
   service:
     name: "{{ galera_servicename }}"
     enabled: yes
+    state: started
+
+- include_tasks: secure-install.yml
+
+- name: create proxysql monitoring user
+  mysql_user:
+    name: "{{ galera_monitoring_user }}"
+    password: "{{ galera_monitoring_password }}"
+    host: "{{ galera_monitoring_net }}"
+    state: present
+
+- name: create proxysql app user
+  mysql_user:
+    name: "{{ galera_app_user }}"
+    password: "{{ galera_app_password }}"
+    host: "{{ galera_app_net }}"
+    priv: "*.*:ALL"
+    state: present
+
+- include_tasks: configuration-galera-bootstrap.yml

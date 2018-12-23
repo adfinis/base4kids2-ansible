@@ -1,0 +1,26 @@
+---
+proxysql_mariadb_release: 10.3
+proxysql_mariadb_interface: eth0
+proxysql_mariadb_interface_fact_var: ansible_{{ proxysql_mariadb_interface }}
+proxysql_datadir: /var/lib/proxysql
+
+# user for the proxysql admin interface
+proxysql_admin_user: admin
+# password for the proxysql admin interface
+proxysql_admin_password: admin
+# port for the admin interface
+proxysql_admin_port: 6032
+
+# proxysql monitoring user on galera nodes
+# this user should exist on all registered galera hosts
+proxysql_monitoring_user: muser
+# proxysql monitoring password on galera nodes
+proxysql_monitoring_password: mpass
+
+# backend user for accesing the galera nodes
+proxysql_backend_user: app_root
+# backend password for accesing the galera nodes
+proxysql_backend_password: app_root
+
+# set this to True to reinit from config file, not loading proxysql.db
+proxysql_reinit_from_config_file: True

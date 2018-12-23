@@ -1,8 +1,32 @@
 ---
+# version of mariadb/galera to use
 galera_mariadb_release: 10.3
-galera_cluster_name: b4k_galera_cluster
 galera_selinux_packages:
   - libselinux-python
   - policycoreutils-python
+# name of the galera cluster
+galera_cluster_name: b4k_galera_cluster
+# interface for mariadb connections
 galera_interface: eth0
 galera_interface_fact_var: ansible_{{ galera_interface }}
+# disable wsrep by default
+galera_wsrep: "OFF"
+# dat file holding galere node state
+galera_grastate_path: /var/lib/mysql/grastate.dat
+
+galera_root_password: root
+# proxysql monitoring user,
+# change according to "monitor_username" in proxysql.cnf
+galera_monitoring_user: muser
+# proxysql monitoring password,
+# change according to "monitor_password" in proxysql.cnf
+galera_monitoring_password: mpass
+# proxysql monitoring user host subnet,
+# should be the network from which proxysql monitors the galera nodes
+# for instance, '192.168.56.%' allows proxysql user 'muser'
+# monitoring access from host 192.168.56.10
+galera_monitoring_net: "192.168.56.%"
+# create user for app access through proxysql
+galera_app_user: app_root
+galera_app_password: app_root
+galera_app_net: "192.168.56.%"

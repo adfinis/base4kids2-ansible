@@ -1,0 +1,7 @@
+proxysql_packages:
+  - proxysql
+  - MariaDB-client
+  - MySQL-python
+
+proxysql_servicename: proxysql
+proxysql_mariadb_host_arch: centos7-amd64
