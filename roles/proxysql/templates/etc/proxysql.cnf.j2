@@ -1,0 +1,156 @@
+# {{ ansible_managed }}
+
+datadir="{{ proxysql_datadir }}"
+
+admin_variables=
+{
+  admin_credentials="{{ proxysql_admin_user }}:{{ proxysql_admin_password }}"
+  mysql_ifaces="0.0.0.0:{{ proxysql_admin_port }}"
+#	debug=true
+}
+
+mysql_variables=
+{
+  threads=4
+  max_connections=2048
+  default_query_delay=0
+  default_query_timeout=36000000
+  have_compress=true
+  poll_timeout=2000
+  interfaces="0.0.0.0:6033"
+  default_schema="information_schema"
+  stacksize=1048576
+  server_version="5.5.30"
+  connect_timeout_server=3000
+  monitor_username="{{ proxysql_monitoring_user }}"
+  monitor_password="{{ proxysql_monitoring_password }}"
+  monitor_history=600000
+  monitor_connect_interval=60000
+  monitor_ping_interval=10000
+  monitor_read_only_interval=1500
+  monitor_read_only_timeout=500
+  ping_interval_server_msec=120000
+  ping_timeout_server=500
+  commands_stats=true
+  sessions_sort=true
+  connect_retries_on_failure=10
+}
+
+# defines replication hostgroups
+mysql_replication_hostgroups=
+(
+{
+  writer_hostgroup=1
+  reader_hostgroup=2
+  comment="b4k2_galera_cluster"
+}
+)
+
+# defines all the mariadb servers
+mysql_servers =
+(
+# the first galera node is configured as master (writes)
+# all following nodes of the galera cluster are slaves (reads only)
+# the "weight" is used to balance the load evenly between the slaves
+{% for host in groups['galera'] %}
+{% if loop.first %}
+{
+  address = "{{ hostvars[host]['ansible_host'] }}"
+  port = 3306
+  hostgroup = 1
+  weight = 100000
+  comment = "MASTER"
+}
+{% else %}
+,{
+  address = "{{ hostvars[host]['ansible_host'] }}"
+  port = 3306
+  hostgroup = 2
+  weight = 100000
+  comment = "SLAVE"
+}
+{% endif %}
+{% endfor %}
+,
+{% for host in groups['galera'] %}
+{% if loop.first %}
+{
+  address = "{{ hostvars[host]['ansible_host'] }}"
+  port = 3306
+  hostgroup = 2
+  weight = 1
+  comment = "MASTER"
+}
+{% else %}
+,{
+  address = "{{ hostvars[host]['ansible_host'] }}"
+  port = 3306
+  hostgroup = 1
+  weight = 1
+  comment = "SLAVE"
+}
+{% endif %}
+{% endfor %}
+)
+
+# defines all the mariadb users
+mysql_users:
+(
+{
+  username = "{{ proxysql_backend_user }}"
+  password = "{{ proxysql_backend_password }}"
+  default_hostgroup = 1
+  max_connections=1000
+  default_schema="information_schema"
+  active = 1
+}
+)
+
+# defines mariadb query rules
+# this is a very basic read/write splitting
+mysql_query_rules:
+(
+{
+  rule_id=1
+  active=1
+  match_pattern="^SELECT .* FOR UPDATE$"
+  destination_hostgroup=1
+  apply=1
+},
+{
+  rule_id=2
+  active=1
+  match_pattern="^SELECT"
+  destination_hostgroup=2
+  apply=1
+}
+)
+
+# the galera checker script monitors the state of the galera cluster
+# arg1: HOSTGROUP WRITERS (required)
+#       the hostgroup_id that contains nodes that will serve 'writes'
+# arg2: HOSTGROUP READERS (optional)
+#       the hostgroup_id that contains nodes that will serve 'reads'
+# arg3: NUMBER WRITERS (optional)
+#       maximum number of write hostgroup_id node that can be marked ONLINE
+#       when 0 (default), all nodes can be marked ONLINE
+# arg4: WRITERS ARE READERS (optional)
+#       when 1 (default), ONLINE nodes in write hostgroup_id will prefer
+#       not to be ONLINE in read hostgroup_id
+# arg5: LOG_FILE (optional)
+scheduler=
+(
+{
+  id=1
+  active=1
+  interval_ms=10000
+  filename="/usr/share/proxysql/tools/proxysql_galera_checker.sh"
+  arg1="1"
+  arg2="2"
+  # set number_writers=1, because Nextcloud requires inter-cluster isolation level
+  # READ-COMMITTED which is only guaranteed with a single-master (1 writer)
+  arg3="1"
+  arg4="1"
+  arg5="/var/lib/proxysql/proxysql_galera_checker.log"
+}
+)

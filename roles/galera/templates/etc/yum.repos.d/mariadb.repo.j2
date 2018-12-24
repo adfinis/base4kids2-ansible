@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+#
+# MariaDB 10.3 CentOS repository list
+# http://downloads.mariadb.org/mariadb/repositories/
+
+[mariadb]
+name = MariaDB
+baseurl = http://yum.mariadb.org/{{ galera_mariadb_release }}/{{ galera_mariadb_host_arch }}
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck=1

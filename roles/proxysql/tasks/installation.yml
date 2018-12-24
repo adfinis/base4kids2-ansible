@@ -1,0 +1,32 @@
+---
+- name: add mariadb repository to yum
+  template:
+    src: etc/yum.repos.d/mariadb.repo.j2
+    dest: /etc/yum.repos.d/mariadb.repo
+    owner: root
+    group: root
+    mode: 0644
+
+- name: add proxysql repository to yum
+  template:
+    src: etc/yum.repos.d/proxysql.repo.j2
+    dest: /etc/yum.repos.d/proxysql.repo
+    owner: root
+    group: root
+    mode: 0644
+
+- name: install proxysql server packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "{{ proxysql_packages }}"
+
+- name: enable and start proxysql on boot
+  service:
+    name: "{{ proxysql_servicename }}"
+    enabled: yes
+    state: started
+
+# install benchmark tool to test read/write split
+- include_tasks: installation-sysbench.yml

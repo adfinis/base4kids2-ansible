@@ -1,3 +1,4 @@
+---
 - hosts: mattermost
   roles:
      - { role: epel, tags: epel }
@@ -13,7 +14,7 @@
      - { role: php7, tags: php7 }
      - { role: nextcloud, tags: nextcloud }
 
-- hosts: ldap 
+- hosts: ldap
   roles:
      - { role: ldapuser, tags: ldapuser }
 
@@ -21,3 +22,10 @@
   roles:
      - { role: lool, tags: lool }
 
+- hosts: galera
+  roles:
+     - { role: galera, tags: galera }
+
+- hosts: proxysql
+  roles:
+     - { role: proxysql, tags: proxysql }

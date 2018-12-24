@@ -1,0 +1,24 @@
+# {{ ansible_managed }}
+
+[mysqld]
+datadir=/var/lib/mysql
+socket=/var/lib/mysql/mysql.sock
+user=mysql
+binlog_format=ROW
+bind-address=0.0.0.0
+default_storage_engine=innodb
+innodb_autoinc_lock_mode=2
+innodb_flush_log_at_trx_commit=0
+innodb_buffer_pool_size=122M
+wsrep_provider=/usr/lib64/galera/libgalera_smm.so
+
+# configure flow control to perform better in master-slave scenario
+wsrep_provider_options="gcache.size=300M; gcache.page_size=300M; gcs.fc_limit = 256; gcs.fc_factor = 0.99; gcs.fc_master_slave = YES;"
+wsrep_cluster_name="{{ galera_cluster_name }}"
+wsrep_node_address="{{ hostvars[inventory_hostname][galera_interface_fact_var]['ipv4']['address'] }}"
+wsrep_cluster_address="gcomm://{{ groups['galera'] | map('extract', hostvars, [galera_interface_fact_var,'ipv4','address']) | list | join(',') }}"
+wsrep_on={{ galera_wsrep }}
+
+[mysql_safe]
+log-error=/var/log/mysqld.log
+pid-file=/var/run/mysqld/mysqld.pid

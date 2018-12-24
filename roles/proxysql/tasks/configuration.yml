@@ -1,0 +1,67 @@
+---
+- name: add proxysql config
+  template:
+    src: etc/proxysql.cnf.j2
+    dest: /etc/proxysql.cnf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: install .my.cnf for root
+  template: src=auth.my.cnf.j2 dest=~/.my.cnf
+
+- name: detect existing db
+  stat:
+    path: "{{ proxysql_datadir }}/proxysql.db"
+  register: proxysql_register_db
+
+- name: stop proxysql
+  service:
+    name: "{{ proxysql_servicename }}"
+    state: stopped
+
+- name: reinit if no config db or explicitly set
+  command: "service proxysql initial"
+  become: yes
+  when: proxysql_reinit_from_config_file or proxysql_register_db.stat.exists == False
+
+- name: start proxysql
+  service:
+    name: "{{ proxysql_servicename }}"
+    state: started
+
+# # load all settings from config file
+# - proxysql_manage_config:
+#     config_file="~/.my.cnf" action="LOAD" config_settings="MYSQL VARIABLES" direction="FROM" config_layer="CONFIG"
+# - proxysql_manage_config:
+#     config_file=~/.my.cnf action="LOAD" config_settings="MYSQL USERS" direction="FROM" config_layer="CONFIG"
+# - proxysql_manage_config:
+#     config_file=~/.my.cnf action="LOAD" config_settings="MYSQL SERVERS" direction="FROM" config_layer="CONFIG"
+# - proxysql_manage_config:
+#     config_file=~/.my.cnf action="LOAD" config_settings="MYSQL QUERY RULES" direction="FROM" config_layer="CONFIG"
+# - proxysql_manage_config:
+#     config_file=~/.my.cnf action="LOAD" config_settings="SCHEDULER" direction="FROM" config_layer="CONFIG"
+#
+# # persist all settings to db
+# - proxysql_manage_config:
+#     config_file=~/.my.cnf action="SAVE" config_settings="MYSQL VARIABLES" direction="TO" config_layer="DISK"
+# - proxysql_manage_config:
+#     config_file=~/.my.cnf action="SAVE" config_settings="MYSQL USERS" direction="TO" config_layer="DISK"
+# - proxysql_manage_config:
+#     config_file=~/.my.cnf action="SAVE" config_settings="MYSQL SERVERS" direction="TO" config_layer="DISK"
+# - proxysql_manage_config:
+#     config_file=~/.my.cnf action="SAVE" config_settings="MYSQL QUERY RULES" direction="TO" config_layer="DISK"
+# - proxysql_manage_config:
+#     config_file=~/.my.cnf action="SAVE" config_settings="SCHEDULER" direction="TO" config_layer="DISK"
+#
+# # load all settings to runtime
+# - proxysql_manage_config:
+#     config_file=~/.my.cnf action="LOAD" config_settings="MYSQL VARIABLES" direction="TO" config_layer="RUNTIME"
+# - proxysql_manage_config:
+#     config_file=~/.my.cnf action="LOAD" config_settings="MYSQL USERS" direction="TO" config_layer="RUNTIME"
+# - proxysql_manage_config:
+#     config_file=~/.my.cnf action="LOAD" config_settings="MYSQL SERVERS" direction="TO" config_layer="RUNTIME"
+# - proxysql_manage_config:
+#     config_file=~/.my.cnf action="LOAD" config_settings="MYSQL QUERY RULES" direction="TO" config_layer="RUNTIME"
+# - proxysql_manage_config:
+#     config_file=~/.my.cnf action="LOAD" config_settings="SCHEDULER" direction="TO" config_layer="RUNTIME"

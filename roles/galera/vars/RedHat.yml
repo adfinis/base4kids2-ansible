@@ -1,0 +1,7 @@
+---
+galera_packages:
+  - mariadb-server
+  - MySQL-python
+
+galera_servicename: mariadb
+galera_mariadb_host_arch: "centos7-amd64"
