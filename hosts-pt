@@ -17,5 +17,5 @@ galera-02 ansible_host=192.168.56.4
 galera-03 ansible_host=192.168.56.5
 
 [proxysql]
-proxysql-01 ansible_host=192.168.56.10
+proxysql-01 keepalived_priority=150 ansible_host=192.168.56.10
 proxysql-02 ansible_host=192.168.56.11

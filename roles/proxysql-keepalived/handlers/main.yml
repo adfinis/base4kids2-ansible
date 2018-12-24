@@ -1,0 +1,5 @@
+---
+- name: keepalived reload
+  service:
+    name: keepalived
+    state: reloaded

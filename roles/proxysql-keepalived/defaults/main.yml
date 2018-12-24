@@ -1,0 +1,12 @@
+keepalived_packages:
+  - keepalived
+
+# vip interface
+keepalived_interface: eth1
+# keepalived master/slave priority
+keepalived_priority: 100
+# keepalived virtual ips
+keepalived_vips:
+  - 172.28.128.20/24
+# keepalived auth password
+keepalived_password: 1111

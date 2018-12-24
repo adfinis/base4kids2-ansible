@@ -1,0 +1,13 @@
+---
+- name: install keepalived server packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "{{ keepalived_packages }}"
+
+- name: enable and start keepalived on boot
+  service:
+    name: keepalived
+    enabled: yes
+    state: started
