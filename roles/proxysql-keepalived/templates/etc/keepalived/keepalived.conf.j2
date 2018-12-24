@@ -1,0 +1,44 @@
+# {{ ansible_managed }}
+# configuration file for keepalived
+
+vrr_script check_proxysql {
+  script "/bin/systemctl status proxysql"
+  interval 2
+  # any VRRP instance  monitoring the script will transition to the fault state
+  # after <fall> failures of the script. After that, <rise> consecutive successes
+  # will cause VRRP instances to leave the fault state.
+  fall 2
+  rise 2
+}
+
+vrrp_instance VI_1 {
+  state MASTER
+  interface {{ keepalived_interface }}
+  # arbitrary unique number from 0 to 255
+  # used to differentiate multiple instances of vrrpd
+  # running on the same NIC (and hence same socket).
+  virtual_router_id 51
+  # for electing MASTER, highest priority wins.
+  # to be MASTER, make this 50 more than on other machines.
+  priority {{ keepalived_priority }}
+  # VRRP Advert interval in seconds (e.g. 0.92) (use default)
+  advert_int 1
+  authentication {
+    auth_type PASS
+    # password for accessing vrrpd.
+    # should be the same on all machines.
+    # only the first eight (8) characters are used.
+    auth_pass {{ keepalived_password }}
+  }
+  # addresses add|del on change to MASTER, to BACKUP.
+  # with the same entries on other machines,
+  # the opposite transition will be occurring.
+  virtual_ipaddress {
+    {% for vip in keepalived_vips %}
+    {{ vip }}
+    {% endfor %}
+  }
+  track_script {
+    check_proxysql
+  }
+}
