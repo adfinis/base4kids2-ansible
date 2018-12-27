@@ -1,0 +1,12 @@
+---
+redis_packages:
+  - redis
+
+# interface for redis connections
+redis_interface: eth0
+redis_interface_fact_var: ansible_{{ redis_interface }}
+
+redis_password: 111
+
+# master ip
+redis_slave_of:

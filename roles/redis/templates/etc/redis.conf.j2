@@ -1,0 +1,65 @@
+# {{ ansible_managed }}
+
+bind {{ hostvars[inventory_hostname][redis_interface_fact_var]['ipv4']['address'] }} 127.0.0.1
+port 6379
+# limited by /proc/sys/net/core/somaxconn
+tcp-backlog 511
+# close connection after client was idle for n seconds, 0=disabled
+timeout 0
+tcp-keepalive 300
+# if daemon, will write pid to /var/run/redis_6379.pid
+daemonize no
+# even used if not deamonized
+pidfile /var/run/redis_6379.pid
+# singal "process is ready" (upstart, systemd, auto)
+supervised no
+
+loglevel notice
+# empty string to log to stdout
+#logfile /var/log/redis/redis.log
+# log to syslog
+syslog-enabled yes
+
+# default db is db 0
+databases 16
+
+################################ SNAPSHOTTING  ################################
+# disable saving by commenting all "save" lines
+# after 900 sec (15 min) if at least 1 key changed
+save 900 1
+# after 300 sec (5 min) if at least 10 keys changed
+save 300 10
+# after 60 sec if at least 10000 keys changed
+save 60 10000
+
+# stop if snapshot fails
+stop-writes-on-bgsave-error yes
+
+# compress string objects using LZF
+rdbcompression yes
+
+# place checksum at the end of the file, disable for saving/loading rdb files
+rdbchecksum yes
+
+# filename of db dump
+dbfilename dump.rdb
+# db will be written inside this directory
+dir /var/lib/redis
+
+################################# REPLICATION #################################
+{% if redis_slave_of %}
+slaveof {{ redis_slave_of }} 6379
+{% endif %}
+
+# authenticate with master before replication synchronization process
+masterauth {{ redis_password }}
+
+# still reply to requests even if slave disconnected from master
+slave-serve-stale-data yes
+
+# slave is read-only
+slave-read-only yes
+
+################################## SECURITY ###################################
+# client authentication
+requirepass {{ redis_password }}

@@ -13,7 +13,7 @@
      - { role: php7, tags: php7 }
      - { role: nextcloud, tags: nextcloud }
 
-- hosts: ldap 
+- hosts: ldap
   roles:
      - { role: ldapuser, tags: ldapuser }
 
@@ -21,3 +21,12 @@
   roles:
      - { role: lool, tags: lool }
 
+- hosts: redis
+  roles:
+     - { role: epel, tags: epel }
+     - { role: redis, tags: redis }
+
+- hosts: redis_sentinel
+  roles:
+     - { role: epel, tags: epel }
+     - { role: redis_sentinel, tags: redis_sentinel }

@@ -1,0 +1,3 @@
+---
+# php version used by nextcloud
+redis_sentinel_php: /opt/rh/rh-php70/root/bin/php

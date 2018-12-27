@@ -1,0 +1,22 @@
+#!/bin/sh
+# $0: filename
+# $1: redis sentinel master name
+# $2: role, is either "leader" or "observer"
+# $3: state, is currently always "failover"
+# $4: from-ip, the failing/old master ip
+# $5: from-port, the failing/old master port
+# $6: to-ip, the new master ip
+# $7: to-port, the new master port
+
+echo "Redis reconfiguration script to update config.php with new redis master."
+occ='{{ redis_sentinel_nextcloud_install_dir }}'/nextcloud/occ
+if [ -f "$occ" ]
+then
+  echo " Found Nextcloud host, running 'occ' to update new redis master IP"
+	{{ redis_sentinel_php }} $occ config:system:set redis host --value=$6
+else
+	echo " occ not found, not touching config.php"
+fi
+
+# If script exits with "2" (or an higher value) the script execution is not retried.
+exit 2

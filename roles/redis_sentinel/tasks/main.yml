@@ -1,0 +1,22 @@
+---
+- name: include os specific vars
+  include_vars: '{{ item }}'
+  with_first_found:
+    - files:
+        - '{{ ansible_distribution }}_{{ ansible_distribution_major_version }}.yml'
+        - '{{ ansible_os_family }}.yml'
+      skip: true
+  tags:
+    - 'role::redis_sentinel'
+    - 'role::redis_sentinel:install'
+    - 'role::redis_sentinel:config'
+
+- import_tasks: installation.yml
+  tags:
+    - 'role::redis_sentinel'
+    - 'role::redis_sentinel:install'
+
+- import_tasks: configuration.yml
+  tags:
+    - 'role::redis_sentinel'
+    - 'role::redis_sentinel:config'

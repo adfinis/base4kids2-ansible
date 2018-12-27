@@ -1,0 +1,25 @@
+---
+- name: copy sentinel config
+  template:
+    src: etc/redis_sentinel.conf.j2
+    dest: /etc/redis-sentinel.conf
+    owner: root
+    group: root
+    mode: 0666
+    backup: yes
+  # notify: keepalived reload
+
+- name: copy sentinel reconfiguration script for nextcloud
+  template:
+    src: etc/redis_sentinel_reconfig.sh.j2
+    dest: "{{ redis_sentinel_reconfig_script }}"
+    owner: root
+    group: root
+    mode: 0755
+    backup: yes
+
+- name: enable and start redis-sentinel on boot
+  service:
+    name: redis-sentinel
+    enabled: yes
+    state: started

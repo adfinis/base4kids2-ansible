@@ -1,5 +1,5 @@
 [mattermost]
-sax81106 
+sax81106
 
 [nextcloud]
 sax81108
@@ -10,3 +10,13 @@ sax81111
 
 [lool]
 sax81107
+
+[redis]
+redis-master-01 ansible_host=192.168.56.31
+redis-slave-01 ansible_host=192.168.56.32 redis_slave_of=192.168.56.31
+
+[redis_sentinel]
+redis-master-01 ansible_host=192.168.56.31
+redis-slave-01 ansible_host=192.168.56.32
+nextcloud-01 ansible_host=192.168.56.41
+nextcloud-02 ansible_host=192.168.56.42
