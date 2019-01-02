@@ -1,0 +1,46 @@
+---
+- hosts: ldap
+  roles:
+     - { role: ldapuser, tags: ldapuser }
+
+- hosts: galera
+  roles:
+     - { role: galera, tags: galera }
+
+- hosts: proxysql
+  roles:
+     - { role: proxysql, tags: proxysql }
+     - { role: proxysql-keepalived, tags: proxysql-keepalived }
+
+- hosts: redis
+  roles:
+     - { role: epel, tags: epel }
+     - { role: redis, tags: redis }
+
+- hosts: redis_sentinel
+  roles:
+     - { role: epel, tags: epel }
+     - { role: redis_sentinel, tags: redis_sentinel }
+
+- hosts: haproxy
+  roles:
+     - { role: haproxy, tags: haproxy }
+
+- hosts: mattermost
+  roles:
+     - { role: epel, tags: epel }
+     - { role: adfinis-sygroup.nginx, tags: nginx }
+     - { role: adfinis-sygroup.mariadb, tags: mariadb }
+     - { role: mattermost, tags: mattermost }
+
+- hosts: nextcloud
+  roles:
+     - { role: epel, tags: epel }
+     - { role: rhscl, tags: rhscl }
+     - { role: apache, tags: apache }
+     - { role: php7, tags: php7 }
+     - { role: nextcloud, tags: nextcloud }
+
+- hosts: lool
+  roles:
+     - { role: lool, tags: lool }
