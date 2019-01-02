@@ -5,10 +5,12 @@
 
 - hosts: galera
   roles:
+     - { role: rhscl, tags: rhscl }
      - { role: galera, tags: galera }
 
 - hosts: proxysql
   roles:
+     - { role: rhscl, tags: rhscl }
      - { role: proxysql, tags: proxysql }
      - { role: proxysql-keepalived, tags: proxysql-keepalived }
 
