@@ -1,3 +1,4 @@
+---
 - hosts: mattermost
   roles:
      - { role: epel, tags: epel }
@@ -21,12 +22,11 @@
   roles:
      - { role: lool, tags: lool }
 
-- hosts: redis
+- hosts: galera
   roles:
-     - { role: epel, tags: epel }
-     - { role: redis, tags: redis }
+     - { role: galera, tags: galera }
 
-- hosts: redis_sentinel
+- hosts: proxysql
   roles:
-     - { role: epel, tags: epel }
-     - { role: redis_sentinel, tags: redis_sentinel }
+     - { role: proxysql, tags: proxysql }
+     - { role: proxysql-keepalived, tags: proxysql-keepalived }
