@@ -16,6 +16,7 @@
     owner: root
     group: root
     mode: 0755
+    setype: redis_conf_t
     backup: yes
 
 - name: enable and start redis-sentinel on boot

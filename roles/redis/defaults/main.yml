@@ -6,7 +6,9 @@ redis_packages:
 redis_interface: eth0
 redis_interface_fact_var: ansible_{{ redis_interface }}
 
+# choose stronger password
 redis_password: 111
 
-# master ip
+# master ip, if set, this instance will be slave
+# otherwise, it assumes to be master
 redis_slave_of:

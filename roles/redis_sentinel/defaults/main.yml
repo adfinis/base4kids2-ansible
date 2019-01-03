@@ -15,5 +15,8 @@ redis_sentinel_quorum: 3
 
 # nextcloud installation directory
 redis_sentinel_nextcloud_install_dir: /var/www/html
-# script used to reconfigure the current redis master in nextcloud config.php
+# script used to reconfigure the current redis master
+# replace the content of this script with the logic required by your app
 redis_sentinel_reconfig_script: /etc/redis_sentinel_reconfig.sh
+# php version used in sentinel reconfig scripts
+redis_sentinel_php: /usr/bin/php
