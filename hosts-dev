@@ -8,7 +8,7 @@ proxysql-01 ansible_host=192.168.56.10 keepalived_priority=150
 proxysql-02 ansible_host=192.168.56.11
 
 [haproxy]
-haproxy-01 ansible_host=192.168.56.61
+haproxy-01 ansible_host=192.168.56.61 keepalived_priority=150
 haproxy-02 ansible_host=192.168.56.62
 
 [lool]
