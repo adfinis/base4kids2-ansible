@@ -1,6 +1,8 @@
 ---
 redis_sentinel_packages:
   - redis
+  - libselinux-python
+  - policycoreutils-python
 
 # interface for redis sentinel connections
 redis_sentinel_interface: eth0

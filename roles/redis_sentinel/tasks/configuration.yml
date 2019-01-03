@@ -7,7 +7,6 @@
     group: root
     mode: 0666
     backup: yes
-  # notify: keepalived reload
 
 - name: copy sentinel reconfiguration script for nextcloud
   template:
@@ -18,6 +17,8 @@
     mode: 0755
     setype: redis_conf_t
     backup: yes
+
+- include_tasks: configuration-selinux.yml
 
 - name: enable and start redis-sentinel on boot
   service:
