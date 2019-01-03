@@ -12,7 +12,7 @@
   roles:
      - { role: rhscl, tags: rhscl }
      - { role: proxysql, tags: proxysql }
-     - { role: proxysql-keepalived, tags: proxysql-keepalived }
+     - { role: keepalived, tags: keepalived }
 
 - hosts: redis
   roles:
@@ -27,6 +27,7 @@
 - hosts: haproxy
   roles:
      - { role: haproxy, tags: haproxy }
+     - { role: keepalived, tags: keepalived }
 
 - hosts: mattermost
   roles:
