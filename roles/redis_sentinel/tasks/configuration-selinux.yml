@@ -12,11 +12,8 @@
 - name: wait for server to come back
   become: false
   local_action:
-    module: wait_for
-      host={{ ansible_host }}
-      port=22
+    module: wait_for_connection
       delay=2
-      state=started
   when: redis_sentinel_register_selinux.changed
 
 - name: allow sentinel to listen on tcp ports
