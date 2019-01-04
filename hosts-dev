@@ -1,30 +1,30 @@
 [galera]
-galera-01 ansible_host=192.168.56.3
-galera-02 ansible_host=192.168.56.4
-galera-03 ansible_host=192.168.56.5
+galera-01
+galera-02
+galera-03
 
 [proxysql]
-proxysql-01 ansible_host=192.168.56.10 keepalived_priority=150
-proxysql-02 ansible_host=192.168.56.11
+proxysql-01 keepalived_priority=150
+proxysql-02
 
 [haproxy]
-haproxy-01 ansible_host=192.168.56.61 keepalived_priority=150
-haproxy-02 ansible_host=192.168.56.62
+haproxy-01 keepalived_priority=150
+haproxy-02
 
 [lool]
-collabora-01 ansible_host=192.168.56.51
-collabora-02 ansible_host=192.168.56.52
+collabora-01
+collabora-02
 
 [nextcloud]
-nextcloud-01 ansible_host=192.168.56.41
-nextcloud-02 ansible_host=192.168.56.42
+nextcloud-01
+nextcloud-02
 
 [redis]
-redis-master-01 ansible_host=192.168.56.31
-redis-slave-01 ansible_host=192.168.56.32 redis_slave_of=192.168.56.31
+redis-master-01
+redis-slave-01 redis_slave_of=192.168.56.31
 
 [redis_sentinel]
-redis-master-01 ansible_host=192.168.56.31
-redis-slave-01 ansible_host=192.168.56.32
-nextcloud-01 ansible_host=192.168.56.41
-nextcloud-02 ansible_host=192.168.56.42
+redis-master-01
+redis-slave-01
+nextcloud-01
+nextcloud-02
