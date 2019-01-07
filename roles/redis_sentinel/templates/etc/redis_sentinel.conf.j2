@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+
+port 26379
+bind {{ hostvars[inventory_hostname][redis_sentinel_interface_fact_var]['ipv4']['address'] }} 127.0.0.1
+sentinel monitor {{ redis_sentinel_master_name }} {{ redis_sentinel_master_ip }} 6379 {{ redis_sentinel_quorum }}
+sentinel down-after-milliseconds {{ redis_sentinel_master_name }} 60000
+sentinel failover-timeout {{ redis_sentinel_master_name }} 180000
+sentinel parallel-syncs {{ redis_sentinel_master_name }} 1
+sentinel auth-pass {{ redis_sentinel_master_name }} {{ redis_sentinel_password }}
+sentinel client-reconfig-script {{ redis_sentinel_master_name }} {{ redis_sentinel_reconfig_script }}

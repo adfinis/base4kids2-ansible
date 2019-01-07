@@ -1,0 +1,24 @@
+---
+redis_sentinel_packages:
+  - redis
+  - libselinux-python
+  - policycoreutils-python
+
+# interface for redis sentinel connections
+redis_sentinel_interface: eth0
+redis_sentinel_interface_fact_var: ansible_{{ redis_sentinel_interface }}
+# password to authenticate the redis master
+redis_sentinel_password: 111
+
+redis_sentinel_master_name: master_01
+# assume redis master is on first host in group
+redis_sentinel_master_ip: "{{ hostvars[groups['redis_sentinel'][0]][redis_sentinel_interface_fact_var]['ipv4']['address'] }}"
+redis_sentinel_quorum: 3
+
+# nextcloud installation directory
+redis_sentinel_nextcloud_install_dir: /var/www/html
+# script used to reconfigure the current redis master
+# replace the content of this script with the logic required by your app
+redis_sentinel_reconfig_script: /etc/redis_sentinel_reconfig.sh
+# php version used in sentinel reconfig scripts
+redis_sentinel_php: /usr/bin/php
