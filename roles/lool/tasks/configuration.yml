@@ -7,6 +7,12 @@
      permanent: true
      zone: public
 
+ - name: enabling firewalld service
+   service:
+     name: firewalld
+     enabled: yes
+     state: started
+
  - name: redirect port 443 to loolwsd port
    firewalld:
      rich_rule: rule family={{ item }} forward-port port=443 protocol=tcp to-port={{ lool_port }}
@@ -17,18 +23,13 @@
    with_items:
      - ipv4
 
- - name: enabling firewalld service
-   service:
-     name: firewalld
-     enabled: yes
-     state: started
-
- - name: crate logfile
+ - name: create logfile
    file:
      path: /var/log/loolwsd.log
      owner: lool
      group: lool
      mode: 0660
+     state: touch
 
  - name: lool configuration
    template:
@@ -37,12 +38,6 @@
      owner: '{{ lool_user }}'
      group: '{{ lool_group }}'
    notify: restart_loolwsd
-
- - name: enabling loolwsd service
-   service:
-     name: loolwsd
-     enabled: yes
-     state: started
 
  - name: configure selinux to permissive
    selinux:
